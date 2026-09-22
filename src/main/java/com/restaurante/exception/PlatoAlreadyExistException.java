@@ -1,7 +1,8 @@
 package com.restaurante.exception;
 
-import lombok.Data;
-
-@Data
-public class PlatoAlreadyExistException {
+public class PlatoAlreadyExistException extends RuntimeException {
+    public PlatoAlreadyExistException(String nombre) {
+        super("Ya existe un plato con el nombre: " + nombre);
+    }
 }
+
