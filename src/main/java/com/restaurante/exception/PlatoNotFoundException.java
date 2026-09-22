@@ -1,7 +1,11 @@
 package com.restaurante.exception;
 
-import lombok.Data;
-
-@Data
-public class PlatoNotFoundException {
+public class PlatoNotFoundException extends RuntimeException {
+    public PlatoNotFoundException(Long id) {
+        super("Plato con id " + id + " no encontrado.");
+    }
+    public PlatoNotFoundException(String mensaje) {
+        super(mensaje);
+    }
 }
+
