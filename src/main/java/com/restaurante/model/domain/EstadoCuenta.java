@@ -5,4 +5,3 @@ public enum EstadoCuenta {
     EN_PAGO,
     CERRADA
 }
-
