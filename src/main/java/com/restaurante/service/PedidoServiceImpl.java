@@ -2,7 +2,6 @@ package com.restaurante.service;
 
 import com.restaurante.exception.PedidoNotFoundException;
 import com.restaurante.exception.PlatoNotFoundException;
-import com.restaurante.exception.PlatoNoDisponibleException;
 import com.restaurante.mapper.PedidoMapperIn;
 import com.restaurante.mapper.PedidoMapperOut;
 import com.restaurante.model.domain.EstadoPedido;
