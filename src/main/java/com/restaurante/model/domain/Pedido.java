@@ -43,4 +43,8 @@ public class Pedido {
             default             -> false;
         };
     }
+
+    public double calcularTotal() {
+        return items.stream().mapToDouble(ItemPedido::calcularSubtotal).sum();
+    }
 }
