@@ -44,4 +44,9 @@ public class PlatoRepository {
         return platos.stream()
                 .anyMatch(p -> p.getNombre().equalsIgnoreCase(nombre));
     }
+
+    public void eliminar(Long id) {
+        platos.removeIf(p -> p.getId().equals(id));
+    }
+
 }

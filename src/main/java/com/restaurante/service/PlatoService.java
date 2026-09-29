@@ -12,4 +12,5 @@ public interface PlatoService {
     PlatoResponseDTO actualizarPlato(Long id, PlatoRequestDTO dto);
     PlatoResponseDTO desactivarPlato(Long id);
     PlatoResponseDTO marcarAgotado(Long id);
+    void eliminar(Long id);
 }

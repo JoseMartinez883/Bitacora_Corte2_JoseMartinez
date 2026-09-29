@@ -97,4 +97,13 @@ public class PlatoServiceImpl implements PlatoService {
         plato.cambiarDisponibilidad(false);
         return platoMapperOut.toResponse(platoRepository.guardar(plato));
     }
+
+    @Override
+    public void eliminar(Long id) {
+        log.info("Eliminando plato con id: {}", id);
+        platoRepository.buscarPorId(id);
+        platoRepository.eliminar(id);
+    }
+
+
 }

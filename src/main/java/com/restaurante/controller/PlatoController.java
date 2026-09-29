@@ -56,4 +56,13 @@ public class PlatoController {
     public ResponseEntity<PlatoResponseDTO> marcarAgotado(@PathVariable Long id) {
         return ResponseEntity.ok(platoService.marcarAgotado(id));
     }
+
+    @Operation(summary = "Eliminar plato")
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> eliminarPlato(@PathVariable Long id) {
+        platoService.eliminar(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
