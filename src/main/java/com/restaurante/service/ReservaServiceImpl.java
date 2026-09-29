@@ -50,4 +50,15 @@ public class ReservaServiceImpl implements ReservaService {
         reserva.cancelar(); 
         return reservaMapperOut.toResponse(reservaRepository.guardar(reserva));
     }
+
+    @Override
+    public ReservaResponseDTO actualizar(Long id, com.restaurante.model.dto.request.ReservaRequestDTO dto) {
+        log.info("Actualizando reserva con id: {}", id);
+
+        reservaRepository.buscarPorId(id);
+        com.restaurante.model.domain.Reserva reservaModificada = reservaMapperIn.toDomain(dto);
+        reservaModificada.setId(id);
+        reservaRepository.guardar(reservaModificada);
+        return reservaMapperOut.toResponse(reservaModificada);
+    }
 }

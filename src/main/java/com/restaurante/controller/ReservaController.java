@@ -43,4 +43,10 @@ public class ReservaController {
     public ResponseEntity<ReservaResponseDTO> cancelarReserva(@PathVariable Long id) {
         return ResponseEntity.ok(reservaService.cancelarReserva(id));
     }
+
+    @Operation(summary = "Actualizar reserva")
+    @PutMapping("/{id}")
+    public ResponseEntity<ReservaResponseDTO> actualizarReserva(@PathVariable Long id, @RequestBody ReservaRequestDTO dto) {
+        return ResponseEntity.ok(reservaService.actualizar(id, dto));
+    }
 }
