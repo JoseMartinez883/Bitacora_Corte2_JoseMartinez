@@ -41,24 +41,27 @@ class ReporteServiceImplTest {
     @BeforeEach
     void setUp() {
         ItemPedido item1 = new ItemPedido();
-        item1.setNombre("Pizza");
+        item1.setNombrePlato("Pizza");
         item1.setCantidad(2);
+        item1.setPrecioCongelado(20000.0);
 
         ItemPedido item2 = new ItemPedido();
-        item2.setNombre("Pasta");
+        item2.setNombrePlato("Pasta");
         item2.setCantidad(1);
+        item2.setPrecioCongelado(10000.0);
 
         ItemPedido item3 = new ItemPedido();
-        item3.setNombre("Pizza");
+        item3.setNombrePlato("Pizza");
         item3.setCantidad(3);
+        item3.setPrecioCongelado(10000.0);
 
         pedido1 = new Pedido();
         pedido1.setItems(Arrays.asList(item1, item2));
-        pedido1.setTotal(50000.0);
+        // Total = (2 * 20000) + (1 * 10000) = 50000.0
 
         pedido2 = new Pedido();
         pedido2.setItems(Collections.singletonList(item3));
-        pedido2.setTotal(30000.0);
+        // Total = (3 * 10000) = 30000.0
 
         mesa1 = new Mesa();
         mesa1.setCuentaAbierta(true);
