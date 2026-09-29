@@ -80,8 +80,10 @@ public class PedidoServiceImpl implements PedidoService {
     @Override
     public void eliminar(Long id) {
         log.info("Eliminando pedido con id: {}", id);
-        pedidoRepository.buscarPorId(id);
+        pedidoRepository.buscarPorId(id)
+                .orElseThrow(() -> new PedidoNotFoundException(id));
         pedidoRepository.eliminar(id);
     }
+
 
 }
