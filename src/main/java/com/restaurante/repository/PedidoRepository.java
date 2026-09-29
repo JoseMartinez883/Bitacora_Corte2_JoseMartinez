@@ -37,4 +37,8 @@ public class PedidoRepository {
                 .filter(p -> p.getEstado() == estado)
                 .toList();
     }
+
+    public void eliminar(Long id) {
+        pedidos.removeIf(p -> p.getId().equals(id));
+    }
 }

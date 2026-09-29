@@ -76,4 +76,12 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.cambiarEstado(dto.estadoDestino()); // RN-04: validación en dominio
         return pedidoMapperOut.toResponse(pedidoRepository.guardar(pedido));
     }
+
+    @Override
+    public void eliminar(Long id) {
+        log.info("Eliminando pedido con id: {}", id);
+        pedidoRepository.buscarPorId(id);
+        pedidoRepository.eliminar(id);
+    }
+
 }

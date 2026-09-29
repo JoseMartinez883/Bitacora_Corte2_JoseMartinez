@@ -52,4 +52,13 @@ public class PedidoController {
                                                             @Valid @RequestBody CambioEstadoRequestDTO dto) {
         return ResponseEntity.ok(pedidoService.cambiarEstado(id, dto));
     }
+
+    @Operation(summary = "Eliminar pedido")
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> eliminarPedido(@PathVariable Long id) {
+        pedidoService.eliminar(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
