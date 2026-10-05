@@ -74,6 +74,7 @@ class CuentaServiceImplTest {
         when(cuentaRepository.findAll()).thenReturn(List.of(cuentaEntity));
         when(mesaRepository.findById(1L)).thenReturn(Optional.empty());
         
-        assertThrows(MesaNotFoundException.class, () -> cuentaService.registrarPago(1L, new PagoCuentaRequestDTO("EFECTIVO", 50000.0)));
+        PagoCuentaRequestDTO req = new PagoCuentaRequestDTO("EFECTIVO", 50000.0);
+        assertThrows(MesaNotFoundException.class, () -> cuentaService.registrarPago(1L, req));
     }
 }

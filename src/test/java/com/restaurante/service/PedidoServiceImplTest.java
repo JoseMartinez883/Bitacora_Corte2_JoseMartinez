@@ -10,7 +10,7 @@ import java.util.List;
 import com.restaurante.mapper.*;
 import com.restaurante.persistence.entity.*;
 import com.restaurante.repository.*;
-import com.restaurante.repository.*;
+
 import com.restaurante.validator.PlatoValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -81,7 +81,8 @@ class PedidoServiceImplTest {
     @Test
     void cambiarEstado_lanzaExcepcionSiNoExiste() {
         when(pedidoRepository.findById(99L)).thenReturn(Optional.empty());
-        assertThrows(PedidoNotFoundException.class, () -> pedidoService.cambiarEstado(99L, new CambioEstadoRequestDTO(com.restaurante.model.domain.EstadoPedido.EN_PREPARACION, "1")));
+        CambioEstadoRequestDTO req = new CambioEstadoRequestDTO(com.restaurante.model.domain.EstadoPedido.EN_PREPARACION, "1");
+        assertThrows(PedidoNotFoundException.class, () -> pedidoService.cambiarEstado(99L, req));
     }
 
     @Test
