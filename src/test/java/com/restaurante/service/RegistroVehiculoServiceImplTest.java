@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class RegistroVehiculoServiceImplTest {
     @Mock private RegistroVehiculoRepositoryJPA registroRepository;
-    @Spy private RegistroVehiculoEntityMapper entityMapper = new RegistroVehiculoEntityMapper();
+    @Spy private RegistroVehiculoEntityMapper entityMapper = new RegistroVehiculoEntityMapperImpl();
     @Spy private RegistroVehiculoMapperIn mapperIn = new RegistroVehiculoMapperIn();
     @Spy private RegistroVehiculoMapperOut mapperOut = new RegistroVehiculoMapperOut();
     @InjectMocks private RegistroVehiculoServiceImpl vehiculoService;
