@@ -28,7 +28,7 @@ class PedidoServiceImplTest {
     @Mock private PlatoRepositoryJPA platoRepository;
     @Mock private EventoPedidoRepositoryMongo eventoMongoRepository;
     @Spy private ItemPedidoEntityMapper itemMapper = new ItemPedidoEntityMapperImpl();
-    @Spy private PedidoEntityMapper pedidoEntityMapper = new PedidoEntityMapper(new ItemPedidoEntityMapperImpl());
+    @Spy private PedidoEntityMapper pedidoEntityMapper = new PedidoEntityMapperImpl(new ItemPedidoEntityMapperImpl());
     @Spy private PlatoEntityMapper platoEntityMapper = new PlatoEntityMapperImpl();
     @Spy private PedidoMapperIn pedidoMapperIn = new PedidoMapperIn();
     @Spy private PedidoMapperOut pedidoMapperOut = new PedidoMapperOut();
