@@ -5,6 +5,7 @@ import com.restaurante.exception.PlatoNotFoundException;
 import com.restaurante.mapper.PlatoEntityMapper;
 import com.restaurante.mapper.PlatoEntityMapperImpl;
 import com.restaurante.mapper.PlatoMapperIn;
+import com.restaurante.mapper.PlatoMapperInImpl;
 import com.restaurante.mapper.PlatoMapperOut;
 import com.restaurante.model.domain.Plato;
 import com.restaurante.persistence.entity.PlatoEntity;
@@ -27,7 +28,7 @@ import static org.mockito.Mockito.*;
 class PlatoServiceImplTest {
     @Mock private PlatoRepositoryJPA platoRepository;
     @Spy private PlatoEntityMapper entityMapper = new PlatoEntityMapperImpl();
-    @Spy private PlatoMapperIn platoMapperIn = new PlatoMapperIn();
+    @Spy private PlatoMapperIn platoMapperIn = new PlatoMapperInImpl();
     @Spy private PlatoMapperOut platoMapperOut = new PlatoMapperOut();
     @Mock private PlatoValidator platoValidator;
     @InjectMocks private PlatoServiceImpl platoService;
