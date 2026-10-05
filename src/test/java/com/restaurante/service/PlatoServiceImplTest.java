@@ -1,7 +1,5 @@
 package com.restaurante.service;
 
-import com.restaurante.exception.PlatoAlreadyExistException;
-import com.restaurante.exception.PlatoNotFoundException;
 import com.restaurante.mapper.PlatoEntityMapper;
 import com.restaurante.mapper.PlatoMapperIn;
 import com.restaurante.mapper.PlatoMapperOut;
@@ -21,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
