@@ -1,17 +1,23 @@
 package com.restaurante.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.restaurante.model.dto.request.RegistroVehiculoRequestDTO;
+import com.restaurante.model.dto.response.RegistroVehiculoResponseDTO;
 import com.restaurante.service.RegistroVehiculoService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(VehiculoController.class)
 class VehiculoControllerTest {
@@ -19,15 +25,37 @@ class VehiculoControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
+
     @MockitoBean
-    private RegistroVehiculoService registroVehiculoService;
+    private RegistroVehiculoService vehiculoService;
 
     @Test
-    void listarTodos_exitoso() throws Exception {
-        when(registroVehiculoService.listarTodos()).thenReturn(List.of());
+    void registrarEntrada_exitoso() throws Exception {
+        RegistroVehiculoRequestDTO req = new RegistroVehiculoRequestDTO("ABC-123");
+        RegistroVehiculoResponseDTO res = new RegistroVehiculoResponseDTO(1L, "ABC-123", LocalDateTime.now(), null, "ACTIVO", 0.0);
+        when(vehiculoService.registrarEntrada(any(RegistroVehiculoRequestDTO.class))).thenReturn(res);
 
-        mockMvc.perform(get("/api/v1/vehiculos"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray());
+        mockMvc.perform(post("/api/v1/vehiculos/entrada")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void registrarSalida_exitoso() throws Exception {
+        RegistroVehiculoResponseDTO res = new RegistroVehiculoResponseDTO(1L, "ABC-123", LocalDateTime.now(), LocalDateTime.now().plusHours(1), "INACTIVO", 5000.0);
+        when(vehiculoService.registrarSalida(1L)).thenReturn(res);
+
+        mockMvc.perform(patch("/api/v1/vehiculos/1/salida"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void listarActivos_exitoso() throws Exception {
+        when(vehiculoService.listarActivos()).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v1/vehiculos/activos"))
+                .andExpect(status().isOk());
     }
 }
