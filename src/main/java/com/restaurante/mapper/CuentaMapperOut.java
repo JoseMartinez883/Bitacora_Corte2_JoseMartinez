@@ -4,37 +4,15 @@ import com.restaurante.model.domain.Cuenta;
 import com.restaurante.model.domain.ItemPedido;
 import com.restaurante.model.dto.response.CuentaResponseDTO;
 import com.restaurante.model.dto.response.ItemPedidoResponseDTO;
-import org.springframework.stereotype.Component;
-import java.util.List;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class CuentaMapperOut {
+@Mapper(componentModel = "spring")
+public interface CuentaMapperOut {
 
-    public CuentaResponseDTO toResponse(Cuenta cuenta) {
-        List<ItemPedidoResponseDTO> items = cuenta.getItems().stream()
-                .map(this::toItemResponse)
-                .toList();
+    @Mapping(target = "total", expression = "java(cuenta.calcularTotal())")
+    CuentaResponseDTO toResponse(Cuenta cuenta);
 
-        return new CuentaResponseDTO(
-                cuenta.getId(),
-                cuenta.getIdMesa(),
-                cuenta.getEstado(),
-                items,
-                cuenta.calcularTotal(),
-                cuenta.getFechaApertura(),
-                cuenta.getFechaCierre(),
-                cuenta.getMetodoPago()
-        );
-    }
-
-    private ItemPedidoResponseDTO toItemResponse(ItemPedido item) {
-        return new ItemPedidoResponseDTO(
-                item.getId(),
-                item.getIdPlato(),
-                item.getNombrePlato(),
-                item.getPrecioCongelado(),
-                item.getCantidad(),
-                item.calcularSubtotal()
-        );
-    }
+    @Mapping(target = "subtotal", expression = "java(item.calcularSubtotal())")
+    ItemPedidoResponseDTO toItemResponse(ItemPedido item);
 }

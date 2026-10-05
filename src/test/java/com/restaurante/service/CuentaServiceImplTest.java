@@ -24,7 +24,7 @@ class CuentaServiceImplTest {
     @Mock private MesaRepositoryJPA mesaRepository;
     @Spy private CuentaEntityMapper cuentaEntityMapper = new CuentaEntityMapperImpl(new ItemPedidoEntityMapperImpl());
     @Spy private MesaEntityMapper mesaEntityMapper = new MesaEntityMapperImpl();
-    @Spy private CuentaMapperOut cuentaMapperOut = new CuentaMapperOut();
+    @Spy private CuentaMapperOut cuentaMapperOut = new CuentaMapperOutImpl();
     @InjectMocks private CuentaServiceImpl cuentaService;
 
     @Test
