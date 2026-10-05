@@ -2,19 +2,10 @@ package com.restaurante.mapper;
 
 import com.restaurante.model.domain.Reserva;
 import com.restaurante.model.dto.response.ReservaResponseDTO;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 
-@Component
-public class ReservaMapperOut {
+@Mapper(componentModel = "spring")
+public interface ReservaMapperOut {
 
-    public ReservaResponseDTO toResponse(Reserva reserva) {
-        return new ReservaResponseDTO(
-                reserva.getId(),
-                reserva.getIdMesa(),
-                reserva.getCliente(),
-                reserva.getFechaHora(),
-                reserva.getComensales(),
-                reserva.isActiva()
-        );
-    }
+    ReservaResponseDTO toResponse(Reserva reserva);
 }

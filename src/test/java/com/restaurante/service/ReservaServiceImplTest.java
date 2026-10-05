@@ -20,7 +20,7 @@ class ReservaServiceImplTest {
     @Mock private ReservaRepositoryJPA reservaRepository;
     @Spy private ReservaEntityMapper entityMapper = new ReservaEntityMapperImpl();
     @Spy private ReservaMapperIn reservaMapperIn = new ReservaMapperInImpl();
-    @Spy private ReservaMapperOut reservaMapperOut = new ReservaMapperOut();
+    @Spy private ReservaMapperOut reservaMapperOut = new ReservaMapperOutImpl();
     @InjectMocks private ReservaServiceImpl reservaService;
 
     @Test
