@@ -40,11 +40,13 @@ class RegistroVehiculoServiceImplTest {
         com.restaurante.persistence.entity.RegistroVehiculoEntity entity = new com.restaurante.persistence.entity.RegistroVehiculoEntity();
         entity.setId(1L);
         entity.setPlaca("ABC-123");
+        entity.setEntrada(java.time.LocalDateTime.now().minusHours(2).minusMinutes(30)); // 2h 30m = 3 hours billed
         when(registroRepository.findById(1L)).thenReturn(java.util.Optional.of(entity));
         when(registroRepository.save(any())).thenAnswer(i -> i.getArgument(0));
         
         var response = vehiculoService.registrarSalida(1L);
         assertNotNull(response.salida());
+        assertEquals(9000.0, response.cobro()); // 3 hours * 3000
         verify(registroRepository).save(any());
     }
 
