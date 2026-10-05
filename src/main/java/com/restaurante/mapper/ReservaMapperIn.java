@@ -2,18 +2,13 @@ package com.restaurante.mapper;
 
 import com.restaurante.model.domain.Reserva;
 import com.restaurante.model.dto.request.ReservaRequestDTO;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class ReservaMapperIn {
+@Mapper(componentModel = "spring")
+public interface ReservaMapperIn {
 
-    public Reserva toDomain(ReservaRequestDTO dto) {
-        Reserva reserva = new Reserva();
-        reserva.setIdMesa(dto.idMesa());
-        reserva.setCliente(dto.cliente());
-        reserva.setFechaHora(dto.fechaHora());
-        reserva.setComensales(dto.comensales());
-        reserva.setActiva(true);
-        return reserva;
-    }
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "activa", constant = "true")
+    Reserva toDomain(ReservaRequestDTO dto);
 }
