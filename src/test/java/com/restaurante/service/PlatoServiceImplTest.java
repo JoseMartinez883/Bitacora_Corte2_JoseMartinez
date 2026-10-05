@@ -8,7 +8,6 @@ import com.restaurante.mapper.PlatoMapperOut;
 import com.restaurante.model.domain.Plato;
 import com.restaurante.persistence.entity.PlatoEntity;
 import com.restaurante.model.dto.request.PlatoRequestDTO;
-import com.restaurante.model.dto.response.PlatoResponseDTO;
 import com.restaurante.repository.PlatoRepositoryJPA;
 import com.restaurante.validator.PlatoValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,6 +57,35 @@ class PlatoServiceImplTest {
     void listarDisponibles() {
         when(platoRepository.findAll()).thenReturn(List.of(platoEntity));
         assertFalse(platoService.listarDisponibles().isEmpty());
+    }
+
+    @Test
+    void listarTodos_exitoso() {
+        when(platoRepository.findAll()).thenReturn(List.of(platoEntity));
+        assertFalse(platoService.listarTodos().isEmpty());
+    }
+
+    @Test
+    void actualizarPlato_exitoso() {
+        when(platoRepository.findById(1L)).thenReturn(Optional.of(platoEntity));
+        when(platoRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        assertNotNull(platoService.actualizarPlato(1L, new PlatoRequestDTO("Pizza 2", 2.0, "", "", "", List.of(), "")));
+    }
+
+    @Test
+    void desactivarPlato_exitoso() {
+        when(platoRepository.findById(1L)).thenReturn(Optional.of(platoEntity));
+        when(platoRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        var response = platoService.desactivarPlato(1L);
+        assertFalse(response.disponible());
+    }
+
+    @Test
+    void marcarAgotado_exitoso() {
+        when(platoRepository.findById(1L)).thenReturn(Optional.of(platoEntity));
+        when(platoRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        var response = platoService.marcarAgotado(1L);
+        assertFalse(response.disponible());
     }
 
     @Test

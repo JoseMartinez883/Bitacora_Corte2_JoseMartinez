@@ -1,5 +1,7 @@
 package com.restaurante.service;
 
+import java.util.List;
+
 import com.restaurante.mapper.*;
 import com.restaurante.repository.*;
 import org.junit.jupiter.api.Test;
@@ -44,5 +46,19 @@ class RegistroVehiculoServiceImplTest {
         var response = vehiculoService.registrarSalida(1L);
         assertNotNull(response.salida());
         verify(registroRepository).save(any());
+    }
+
+    @Test
+    void listarActivos_exitoso() {
+        var entity = new com.restaurante.persistence.entity.RegistroVehiculoEntity();
+        entity.setEstado("ACTIVO");
+        when(registroRepository.findAll()).thenReturn(List.of(entity));
+        assertFalse(vehiculoService.listarActivos().isEmpty());
+    }
+
+    @Test
+    void listarTodos_exitoso() {
+        when(registroRepository.findAll()).thenReturn(List.of(new com.restaurante.persistence.entity.RegistroVehiculoEntity()));
+        assertFalse(vehiculoService.listarTodos().isEmpty());
     }
 }

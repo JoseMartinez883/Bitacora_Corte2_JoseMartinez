@@ -25,4 +25,19 @@ class ReporteServiceImplTest {
         when(pedidoRepository.findAll()).thenReturn(List.of());
         assertEquals(0.0, reporteService.calcularIngresosTotales());
     }
+
+    @Test
+    void obtenerResumenDia() {
+        when(pedidoRepository.count()).thenReturn(10L);
+        when(mesaRepository.findAll()).thenReturn(List.of(new com.restaurante.persistence.entity.MesaEntity()));
+        var r = reporteService.obtenerResumenDia();
+        assertEquals(10L, r.get("totalPedidos"));
+        assertEquals(0L, r.get("mesasActivas"));
+    }
+
+    @Test
+    void obtenerPlatosPopulares() {
+        when(pedidoRepository.findAll()).thenReturn(List.of());
+        assertTrue(reporteService.obtenerPlatosPopulares().isEmpty());
+    }
 }
