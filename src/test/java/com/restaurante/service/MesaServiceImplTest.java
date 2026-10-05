@@ -21,11 +21,34 @@ import static org.junit.jupiter.api.Assertions.*;
 class MesaServiceImplTest {
     @Mock private MesaRepositoryJPA mesaRepository;
     @Spy private MesaEntityMapper mesaEntityMapper = new MesaEntityMapper();
-    @Mock private MesaMapperOut mesaMapperOut;
+    @Spy private MesaMapperOut mesaMapperOut = new MesaMapperOut();
     @InjectMocks private MesaServiceImpl mesaService;
 
     @Test
     void init() { assertNotNull(mesaService); }
+
+    @Test
+    void listarTodas_exitoso() {
+        when(mesaRepository.findAll()).thenReturn(List.of(new MesaEntity()));
+        assertFalse(mesaService.listarTodas().isEmpty());
+    }
+
+    @Test
+    void obtenerMesaPorId_exitoso() {
+        MesaEntity mesa = new MesaEntity(); mesa.setId(1L); mesa.setEstado(EstadoMesa.DISPONIBLE);
+        when(mesaRepository.findById(1L)).thenReturn(Optional.of(mesa));
+        assertNotNull(mesaService.obtenerMesaPorId(1L));
+    }
+
+    @Test
+    void abrirCuenta_exitoso() {
+        MesaEntity mesa = new MesaEntity(); mesa.setId(1L); mesa.setEstado(EstadoMesa.DISPONIBLE);
+        when(mesaRepository.findById(1L)).thenReturn(Optional.of(mesa));
+        when(mesaRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        var response = mesaService.abrirCuenta(1L);
+        assertEquals(EstadoMesa.OCUPADA, response.estado());
+        verify(mesaRepository).save(any());
+    }
 
     @Test
     void obtenerMesaPorId_lanzaExcepcionSiNoExiste() {

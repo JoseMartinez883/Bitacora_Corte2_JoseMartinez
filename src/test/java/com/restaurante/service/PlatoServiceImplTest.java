@@ -27,8 +27,8 @@ import static org.mockito.Mockito.*;
 class PlatoServiceImplTest {
     @Mock private PlatoRepositoryJPA platoRepository;
     @Spy private PlatoEntityMapper entityMapper = new PlatoEntityMapper();
-    @Mock private PlatoMapperIn platoMapperIn;
-    @Mock private PlatoMapperOut platoMapperOut;
+    @Spy private PlatoMapperIn platoMapperIn = new PlatoMapperIn();
+    @Spy private PlatoMapperOut platoMapperOut = new PlatoMapperOut();
     @Mock private PlatoValidator platoValidator;
     @InjectMocks private PlatoServiceImpl platoService;
 
@@ -44,9 +44,7 @@ class PlatoServiceImplTest {
     @Test
     void crearPlato_exitoso() {
         when(platoRepository.findAll()).thenReturn(List.of());
-        when(platoMapperIn.toDomain(any())).thenReturn(plato);
         when(platoRepository.save(any())).thenReturn(platoEntity);
-        when(platoMapperOut.toResponse(any())).thenReturn(new PlatoResponseDTO(1L, "Pizza", 1.0, "", "", "", List.of(), "", true, true));
         assertNotNull(platoService.crearPlato(new PlatoRequestDTO("Pizza", 1.0, "", "", "", List.of(), "")));
     }
 

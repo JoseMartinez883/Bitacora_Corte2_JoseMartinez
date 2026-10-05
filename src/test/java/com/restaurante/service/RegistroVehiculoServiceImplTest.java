@@ -15,10 +15,34 @@ import static org.junit.jupiter.api.Assertions.*;
 class RegistroVehiculoServiceImplTest {
     @Mock private RegistroVehiculoRepositoryJPA registroRepository;
     @Spy private RegistroVehiculoEntityMapper entityMapper = new RegistroVehiculoEntityMapper();
-    @Mock private RegistroVehiculoMapperIn mapperIn;
-    @Mock private RegistroVehiculoMapperOut mapperOut;
+    @Spy private RegistroVehiculoMapperIn mapperIn = new RegistroVehiculoMapperIn();
+    @Spy private RegistroVehiculoMapperOut mapperOut = new RegistroVehiculoMapperOut();
     @InjectMocks private RegistroVehiculoServiceImpl vehiculoService;
 
     @Test
     void init() { assertNotNull(vehiculoService); }
+
+    @Test
+    void registrarEntrada_exitoso() {
+        com.restaurante.persistence.entity.RegistroVehiculoEntity entity = new com.restaurante.persistence.entity.RegistroVehiculoEntity();
+        entity.setId(1L);
+        entity.setPlaca("ABC-123");
+        when(registroRepository.save(any())).thenReturn(entity);
+        
+        com.restaurante.model.dto.request.RegistroVehiculoRequestDTO dto = new com.restaurante.model.dto.request.RegistroVehiculoRequestDTO("ABC-123");
+        assertNotNull(vehiculoService.registrarEntrada(dto));
+    }
+
+    @Test
+    void registrarSalida_exitoso() {
+        com.restaurante.persistence.entity.RegistroVehiculoEntity entity = new com.restaurante.persistence.entity.RegistroVehiculoEntity();
+        entity.setId(1L);
+        entity.setPlaca("ABC-123");
+        when(registroRepository.findById(1L)).thenReturn(java.util.Optional.of(entity));
+        when(registroRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        
+        var response = vehiculoService.registrarSalida(1L);
+        assertNotNull(response.salida());
+        verify(registroRepository).save(any());
+    }
 }

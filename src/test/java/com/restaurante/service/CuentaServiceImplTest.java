@@ -24,11 +24,40 @@ class CuentaServiceImplTest {
     @Mock private MesaRepositoryJPA mesaRepository;
     @Spy private CuentaEntityMapper cuentaEntityMapper = new CuentaEntityMapper(new ItemPedidoEntityMapper());
     @Spy private MesaEntityMapper mesaEntityMapper = new MesaEntityMapper();
-    @Mock private CuentaMapperOut cuentaMapperOut;
+    @Spy private CuentaMapperOut cuentaMapperOut = new CuentaMapperOut();
     @InjectMocks private CuentaServiceImpl cuentaService;
 
     @Test
     void init() { assertNotNull(cuentaService); }
+
+    @Test
+    void obtenerCuentaActivaPorMesa_exitoso() {
+        CuentaEntity cuentaEntity = new CuentaEntity();
+        cuentaEntity.setIdMesa(1L);
+        cuentaEntity.setEstado(EstadoCuenta.ABIERTA);
+        cuentaEntity.setItems(List.of());
+        when(cuentaRepository.findAll()).thenReturn(List.of(cuentaEntity));
+        
+        assertNotNull(cuentaService.obtenerCuentaActivaPorMesa(1L));
+    }
+
+    @Test
+    void registrarPago_exitoso() {
+        CuentaEntity cuentaEntity = new CuentaEntity();
+        cuentaEntity.setIdMesa(1L);
+        cuentaEntity.setEstado(EstadoCuenta.ABIERTA);
+        cuentaEntity.setItems(List.of());
+        
+        com.restaurante.persistence.entity.MesaEntity mesaEntity = new com.restaurante.persistence.entity.MesaEntity();
+        mesaEntity.setId(1L);
+        mesaEntity.setEstado(com.restaurante.model.domain.EstadoMesa.OCUPADA);
+        
+        when(cuentaRepository.findAll()).thenReturn(List.of(cuentaEntity));
+        when(mesaRepository.findById(1L)).thenReturn(Optional.of(mesaEntity));
+        when(cuentaRepository.save(any())).thenReturn(cuentaEntity);
+        
+        assertNotNull(cuentaService.registrarPago(1L, new PagoCuentaRequestDTO("EFECTIVO", 50000.0)));
+    }
 
     @Test
     void obtenerCuentaActivaPorMesa_lanzaExcepcionSiNoExiste() {

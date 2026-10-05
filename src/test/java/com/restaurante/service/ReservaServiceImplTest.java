@@ -19,12 +19,56 @@ import static org.junit.jupiter.api.Assertions.*;
 class ReservaServiceImplTest {
     @Mock private ReservaRepositoryJPA reservaRepository;
     @Spy private ReservaEntityMapper entityMapper = new ReservaEntityMapper();
-    @Mock private ReservaMapperIn reservaMapperIn;
-    @Mock private ReservaMapperOut reservaMapperOut;
+    @Spy private ReservaMapperIn reservaMapperIn = new ReservaMapperIn();
+    @Spy private ReservaMapperOut reservaMapperOut = new ReservaMapperOut();
     @InjectMocks private ReservaServiceImpl reservaService;
 
     @Test
     void init() { assertNotNull(reservaService); }
+
+    @Test
+    void crearReserva_exitoso() {
+        com.restaurante.persistence.entity.ReservaEntity entity = new com.restaurante.persistence.entity.ReservaEntity();
+        entity.setId(1L);
+        entity.setCliente("Juan");
+        entity.setActiva(true);
+        when(reservaRepository.save(any())).thenReturn(entity);
+        
+        ReservaRequestDTO dto = new ReservaRequestDTO(1L, "Juan", LocalDateTime.now().plusDays(1), 4);
+        assertNotNull(reservaService.crearReserva(dto));
+    }
+
+    @Test
+    void obtenerReservaPorId_exitoso() {
+        com.restaurante.persistence.entity.ReservaEntity entity = new com.restaurante.persistence.entity.ReservaEntity();
+        entity.setId(1L);
+        when(reservaRepository.findById(1L)).thenReturn(Optional.of(entity));
+        assertNotNull(reservaService.obtenerReservaPorId(1L));
+    }
+
+    @Test
+    void actualizar_exitoso() {
+        com.restaurante.persistence.entity.ReservaEntity entity = new com.restaurante.persistence.entity.ReservaEntity();
+        entity.setId(1L);
+        when(reservaRepository.existsById(1L)).thenReturn(true);
+        when(reservaRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        
+        ReservaRequestDTO dto = new ReservaRequestDTO(1L, "Juan", LocalDateTime.now().plusDays(1), 4);
+        assertNotNull(reservaService.actualizar(1L, dto));
+    }
+
+    @Test
+    void cancelarReserva_exitoso() {
+        com.restaurante.persistence.entity.ReservaEntity entity = new com.restaurante.persistence.entity.ReservaEntity();
+        entity.setId(1L);
+        entity.setActiva(true);
+        when(reservaRepository.findById(1L)).thenReturn(Optional.of(entity));
+        when(reservaRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        
+        var response = reservaService.cancelarReserva(1L);
+        assertFalse(response.activa());
+        verify(reservaRepository).save(any());
+    }
 
     @Test
     void obtenerReservaPorId_lanzaExcepcionSiNoExiste() {

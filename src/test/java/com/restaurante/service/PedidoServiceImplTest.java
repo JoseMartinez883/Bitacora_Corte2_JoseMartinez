@@ -30,16 +30,37 @@ class PedidoServiceImplTest {
     @Spy private ItemPedidoEntityMapper itemMapper = new ItemPedidoEntityMapper();
     @Spy private PedidoEntityMapper pedidoEntityMapper = new PedidoEntityMapper(new ItemPedidoEntityMapper());
     @Spy private PlatoEntityMapper platoEntityMapper = new PlatoEntityMapper();
-    @Mock private PedidoMapperIn pedidoMapperIn;
-    @Mock private PedidoMapperOut pedidoMapperOut;
+    @Spy private PedidoMapperIn pedidoMapperIn = new PedidoMapperIn();
+    @Spy private PedidoMapperOut pedidoMapperOut = new PedidoMapperOut();
     @Mock private PlatoValidator platoValidator;
     @InjectMocks private PedidoServiceImpl pedidoService;
 
     @Test
     void obtenerPedidoPorId_exitoso() {
-        PedidoEntity pe = new PedidoEntity(); pe.setId(1L);
+        PedidoEntity pe = new PedidoEntity(); pe.setId(1L); pe.setItems(List.of()); pe.setEstado(com.restaurante.model.domain.EstadoPedido.EN_PREPARACION);
         when(pedidoRepository.findById(1L)).thenReturn(Optional.of(pe));
         assertDoesNotThrow(() -> pedidoService.obtenerPedidoPorId(1L));
+    }
+
+    @Test
+    void crearPedido_exitoso() {
+        PedidoRequestDTO dto = new PedidoRequestDTO(1L, List.of(new ItemPedidoRequestDTO(1L, 2, List.of())));
+        PlatoEntity plato = new PlatoEntity(); plato.setId(1L); plato.setPrecio(10.0);
+        when(platoRepository.findById(1L)).thenReturn(Optional.of(plato));
+        
+        PedidoEntity pe = new PedidoEntity(); pe.setId(1L); pe.setItems(List.of()); pe.setEstado(com.restaurante.model.domain.EstadoPedido.RECIBIDO);
+        when(pedidoRepository.save(any())).thenReturn(pe);
+        
+        assertNotNull(pedidoService.crearPedido(dto));
+    }
+
+    @Test
+    void cambiarEstado_exitoso() {
+        PedidoEntity pe = new PedidoEntity(); pe.setId(1L); pe.setItems(List.of()); pe.setEstado(com.restaurante.model.domain.EstadoPedido.RECIBIDO);
+        when(pedidoRepository.findById(1L)).thenReturn(Optional.of(pe));
+        when(pedidoRepository.save(any())).thenReturn(pe);
+        
+        assertNotNull(pedidoService.cambiarEstado(1L, new CambioEstadoRequestDTO(com.restaurante.model.domain.EstadoPedido.EN_PREPARACION, "motivo")));
     }
 
     @Test
