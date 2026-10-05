@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class ReservaServiceImplTest {
     @Mock private ReservaRepositoryJPA reservaRepository;
-    @Spy private ReservaEntityMapper entityMapper = new ReservaEntityMapper();
+    @Spy private ReservaEntityMapper entityMapper = new ReservaEntityMapperImpl();
     @Spy private ReservaMapperIn reservaMapperIn = new ReservaMapperIn();
     @Spy private ReservaMapperOut reservaMapperOut = new ReservaMapperOut();
     @InjectMocks private ReservaServiceImpl reservaService;
