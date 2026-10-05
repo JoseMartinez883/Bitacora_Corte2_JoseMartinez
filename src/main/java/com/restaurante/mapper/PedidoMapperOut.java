@@ -4,34 +4,14 @@ import com.restaurante.model.domain.Pedido;
 import com.restaurante.model.domain.ItemPedido;
 import com.restaurante.model.dto.response.PedidoResponseDTO;
 import com.restaurante.model.dto.response.ItemPedidoResponseDTO;
-import org.springframework.stereotype.Component;
-import java.util.List;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class PedidoMapperOut {
+@Mapper(componentModel = "spring")
+public interface PedidoMapperOut {
 
-    public PedidoResponseDTO toResponse(Pedido pedido) {
-        List<ItemPedidoResponseDTO> items = pedido.getItems().stream()
-                .map(this::toItemResponse)
-                .toList();
+    PedidoResponseDTO toResponse(Pedido pedido);
 
-        return new PedidoResponseDTO(
-                pedido.getId(),
-                pedido.getIdMesa(),
-                pedido.getEstado(),
-                items,
-                pedido.getTimestamp()
-        );
-    }
-
-    private ItemPedidoResponseDTO toItemResponse(ItemPedido item) {
-        return new ItemPedidoResponseDTO(
-                item.getId(),
-                item.getIdPlato(),
-                item.getNombrePlato(),
-                item.getPrecioCongelado(),
-                item.getCantidad(),
-                item.calcularSubtotal()
-        );
-    }
+    @Mapping(target = "subtotal", expression = "java(item.calcularSubtotal())")
+    ItemPedidoResponseDTO toItemResponse(ItemPedido item);
 }
