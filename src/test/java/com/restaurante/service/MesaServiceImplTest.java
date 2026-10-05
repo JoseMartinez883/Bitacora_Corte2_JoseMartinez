@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class MesaServiceImplTest {
     @Mock private MesaRepositoryJPA mesaRepository;
-    @Spy private MesaEntityMapper mesaEntityMapper = new MesaEntityMapper();
+    @Spy private MesaEntityMapper mesaEntityMapper = new MesaEntityMapperImpl();
     @Spy private MesaMapperOut mesaMapperOut = new MesaMapperOut();
     @InjectMocks private MesaServiceImpl mesaService;
 
