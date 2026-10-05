@@ -7,6 +7,7 @@ import com.restaurante.mapper.PlatoEntityMapperImpl;
 import com.restaurante.mapper.PlatoMapperIn;
 import com.restaurante.mapper.PlatoMapperInImpl;
 import com.restaurante.mapper.PlatoMapperOut;
+import com.restaurante.mapper.PlatoMapperOutImpl;
 import com.restaurante.model.domain.Plato;
 import com.restaurante.persistence.entity.PlatoEntity;
 import com.restaurante.model.dto.request.PlatoRequestDTO;
@@ -29,7 +30,7 @@ class PlatoServiceImplTest {
     @Mock private PlatoRepositoryJPA platoRepository;
     @Spy private PlatoEntityMapper entityMapper = new PlatoEntityMapperImpl();
     @Spy private PlatoMapperIn platoMapperIn = new PlatoMapperInImpl();
-    @Spy private PlatoMapperOut platoMapperOut = new PlatoMapperOut();
+    @Spy private PlatoMapperOut platoMapperOut = new PlatoMapperOutImpl();
     @Mock private PlatoValidator platoValidator;
     @InjectMocks private PlatoServiceImpl platoService;
 
