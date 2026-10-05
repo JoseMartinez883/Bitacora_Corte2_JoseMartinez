@@ -29,7 +29,7 @@ class PedidoServiceImplTest {
     @Mock private EventoPedidoRepositoryMongo eventoMongoRepository;
     @Spy private ItemPedidoEntityMapper itemMapper = new ItemPedidoEntityMapper();
     @Spy private PedidoEntityMapper pedidoEntityMapper = new PedidoEntityMapper(new ItemPedidoEntityMapper());
-    @Spy private PlatoEntityMapper platoEntityMapper = new PlatoEntityMapper();
+    @Spy private PlatoEntityMapper platoEntityMapper = new PlatoEntityMapperImpl();
     @Spy private PedidoMapperIn pedidoMapperIn = new PedidoMapperIn();
     @Spy private PedidoMapperOut pedidoMapperOut = new PedidoMapperOut();
     @Mock private PlatoValidator platoValidator;
