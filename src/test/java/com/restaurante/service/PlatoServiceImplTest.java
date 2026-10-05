@@ -1,5 +1,7 @@
 package com.restaurante.service;
 
+import com.restaurante.exception.PlatoAlreadyExistException;
+import com.restaurante.exception.PlatoNotFoundException;
 import com.restaurante.mapper.PlatoEntityMapper;
 import com.restaurante.mapper.PlatoMapperIn;
 import com.restaurante.mapper.PlatoMapperOut;
@@ -58,5 +60,45 @@ class PlatoServiceImplTest {
     void listarDisponibles() {
         when(platoRepository.findAll()).thenReturn(List.of(platoEntity));
         assertFalse(platoService.listarDisponibles().isEmpty());
+    }
+
+    @Test
+    void crearPlato_lanzaExcepcionSiYaExiste() {
+        when(platoRepository.findAll()).thenReturn(List.of(platoEntity));
+        PlatoRequestDTO dto = new PlatoRequestDTO("Pizza", 1.0, "", "", "", List.of(), "");
+        assertThrows(PlatoAlreadyExistException.class, () -> platoService.crearPlato(dto));
+        verify(platoRepository, never()).save(any());
+    }
+
+    @Test
+    void obtenerPlatoPorId_lanzaExcepcionSiNoExiste() {
+        when(platoRepository.findById(99L)).thenReturn(Optional.empty());
+        assertThrows(PlatoNotFoundException.class, () -> platoService.obtenerPlatoPorId(99L));
+    }
+
+    @Test
+    void actualizarPlato_lanzaExcepcionSiNoExiste() {
+        when(platoRepository.findById(99L)).thenReturn(Optional.empty());
+        PlatoRequestDTO dto = new PlatoRequestDTO("Pizza", 1.0, "", "", "", List.of(), "");
+        assertThrows(PlatoNotFoundException.class, () -> platoService.actualizarPlato(99L, dto));
+    }
+
+    @Test
+    void desactivarPlato_lanzaExcepcionSiNoExiste() {
+        when(platoRepository.findById(99L)).thenReturn(Optional.empty());
+        assertThrows(PlatoNotFoundException.class, () -> platoService.desactivarPlato(99L));
+    }
+
+    @Test
+    void marcarAgotado_lanzaExcepcionSiNoExiste() {
+        when(platoRepository.findById(99L)).thenReturn(Optional.empty());
+        assertThrows(PlatoNotFoundException.class, () -> platoService.marcarAgotado(99L));
+    }
+
+    @Test
+    void eliminar_lanzaExcepcionSiNoExiste() {
+        when(platoRepository.existsById(99L)).thenReturn(false);
+        assertThrows(PlatoNotFoundException.class, () -> platoService.eliminar(99L));
+        verify(platoRepository, never()).deleteById(anyLong());
     }
 }
