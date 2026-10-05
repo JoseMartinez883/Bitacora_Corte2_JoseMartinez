@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MesaServiceImplTest {
     @Mock private MesaRepositoryJPA mesaRepository;
     @Spy private MesaEntityMapper mesaEntityMapper = new MesaEntityMapperImpl();
-    @Spy private MesaMapperOut mesaMapperOut = new MesaMapperOut();
+    @Spy private MesaMapperOut mesaMapperOut = new MesaMapperOutImpl();
     @InjectMocks private MesaServiceImpl mesaService;
 
     @Test
