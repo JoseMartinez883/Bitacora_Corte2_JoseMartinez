@@ -18,7 +18,7 @@ public class RegistroVehiculo {
 
     public Double calcularCobro() {
         if (entrada == null || salida == null) return 0.0;
-        long minutos = Duration.between(entrada, salida).toMinutes();
+        long minutos = Duration.between(entrada.atZone(ZoneId.systemDefault()), salida.atZone(ZoneId.systemDefault())).toMinutes();
         long horas = (long) Math.ceil(minutos / 60.0);
         this.cobro = horas * TARIFA_POR_HORA;
         return this.cobro;

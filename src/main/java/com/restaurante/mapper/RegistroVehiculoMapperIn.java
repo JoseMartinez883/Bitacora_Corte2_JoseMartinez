@@ -11,7 +11,7 @@ public class RegistroVehiculoMapperIn {
     public RegistroVehiculo toDomain(RegistroVehiculoRequestDTO dto) {
         RegistroVehiculo registro = new RegistroVehiculo();
         registro.setPlaca(dto.placa().toUpperCase());
-        registro.setEntrada(LocalDateTime.now());
+        registro.setEntrada(LocalDateTime.now(java.time.ZoneId.systemDefault()));
         registro.setEstado("ACTIVO");
         return registro;
     }

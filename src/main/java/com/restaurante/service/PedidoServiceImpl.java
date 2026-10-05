@@ -85,7 +85,7 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     private void guardarEventoMongo(Long idPedido, String estadoAnterior, String estadoNuevo, String usuario) {
-        EventoPedidoDocument evento = EventoPedidoDocument.builder().idPedido(idPedido).estadoAnterior(estadoAnterior).estadoNuevo(estadoNuevo).usuarioQueCambio(usuario).timestamp(LocalDateTime.now()).build();
+        EventoPedidoDocument evento = EventoPedidoDocument.builder().idPedido(idPedido).estadoAnterior(estadoAnterior).estadoNuevo(estadoNuevo).usuarioQueCambio(usuario).timestamp(LocalDateTime.now(java.time.ZoneId.systemDefault())).build();
         eventoMongoRepository.save(evento);
     }
 }

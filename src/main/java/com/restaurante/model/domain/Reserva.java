@@ -14,7 +14,7 @@ public class Reserva {
     private boolean activa;
 
     public boolean estaVigente() {
-        return activa && fechaHora != null && fechaHora.isAfter(LocalDateTime.now());
+        return activa && fechaHora != null && fechaHora.isAfter(LocalDateTime.now(java.time.ZoneId.systemDefault()));
     }
 
     public void cancelar() {
@@ -22,7 +22,7 @@ public class Reserva {
     }
 
     public void reprogramar(LocalDateTime nuevaFecha) {
-        if (nuevaFecha == null || nuevaFecha.isBefore(LocalDateTime.now())) {
+        if (nuevaFecha == null || nuevaFecha.isBefore(LocalDateTime.now(java.time.ZoneId.systemDefault()))) {
             throw new IllegalArgumentException("La nueva fecha debe ser posterior a la fecha actual.");
         }
         this.fechaHora = nuevaFecha;

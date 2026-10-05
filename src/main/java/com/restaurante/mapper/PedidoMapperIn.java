@@ -17,7 +17,7 @@ public class PedidoMapperIn {
         Pedido pedido = new Pedido();
         pedido.setIdMesa(dto.idMesa());
         pedido.setEstado(EstadoPedido.RECIBIDO);
-        pedido.setTimestamp(LocalDateTime.now());
+        pedido.setTimestamp(LocalDateTime.now(java.time.ZoneId.systemDefault()));
 
         List<ItemPedido> items = dto.items().stream()
                 .map(itemDto -> toItemDomain(itemDto, platos))

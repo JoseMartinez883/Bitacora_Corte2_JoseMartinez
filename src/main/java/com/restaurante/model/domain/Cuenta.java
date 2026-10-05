@@ -31,7 +31,7 @@ public class Cuenta {
     public void cerrarCuenta(String metodoPago) {
         this.metodoPago = metodoPago;
         this.estado = EstadoCuenta.CERRADA;
-        this.fechaCierre = LocalDateTime.now();
+        this.fechaCierre = LocalDateTime.now(java.time.ZoneId.systemDefault());
         calcularTotal();
     }
 }
