@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CuentaServiceImplTest {
     @Mock private CuentaRepositoryJPA cuentaRepository;
     @Mock private MesaRepositoryJPA mesaRepository;
-    @Spy private CuentaEntityMapper cuentaEntityMapper = new CuentaEntityMapper(new ItemPedidoEntityMapper());
+    @Spy private CuentaEntityMapper cuentaEntityMapper = new CuentaEntityMapper(new ItemPedidoEntityMapperImpl());
     @Spy private MesaEntityMapper mesaEntityMapper = new MesaEntityMapperImpl();
     @Spy private CuentaMapperOut cuentaMapperOut = new CuentaMapperOut();
     @InjectMocks private CuentaServiceImpl cuentaService;

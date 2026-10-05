@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 class ReporteServiceImplTest {
     @Mock private PedidoRepositoryJPA pedidoRepository;
     @Mock private MesaRepositoryJPA mesaRepository;
-    @Spy private PedidoEntityMapper pedidoEntityMapper = new PedidoEntityMapper(new ItemPedidoEntityMapper());
+    @Spy private PedidoEntityMapper pedidoEntityMapper = new PedidoEntityMapper(new ItemPedidoEntityMapperImpl());
     @Spy private MesaEntityMapper mesaEntityMapper = new MesaEntityMapperImpl();
     @InjectMocks private ReporteServiceImpl reporteService;
 
