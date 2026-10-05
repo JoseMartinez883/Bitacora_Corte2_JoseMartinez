@@ -3,7 +3,7 @@ package com.restaurante.model.domain;
 import lombok.Data;
 import java.time.Duration;
 import java.time.LocalDateTime;
-
+import java.time.ZoneId;
 @Data
 public class RegistroVehiculo {
 
@@ -25,7 +25,7 @@ public class RegistroVehiculo {
     }
 
     public void registrarSalida() {
-        this.salida = LocalDateTime.now();
+        this.salida = LocalDateTime.now(ZoneId.systemDefault());
         this.estado = "FINALIZADO";
         calcularCobro();
     }
