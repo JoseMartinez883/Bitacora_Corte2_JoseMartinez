@@ -30,7 +30,7 @@ class PedidoServiceImplTest {
     @Spy private ItemPedidoEntityMapper itemMapper = new ItemPedidoEntityMapperImpl();
     @Spy private PedidoEntityMapper pedidoEntityMapper = new PedidoEntityMapperImpl(new ItemPedidoEntityMapperImpl());
     @Spy private PlatoEntityMapper platoEntityMapper = new PlatoEntityMapperImpl();
-    @Spy private PedidoMapperIn pedidoMapperIn = new PedidoMapperIn();
+    @Spy private PedidoMapperIn pedidoMapperIn = new PedidoMapperInImpl();
     @Spy private PedidoMapperOut pedidoMapperOut = new PedidoMapperOut();
     @Mock private PlatoValidator platoValidator;
     @InjectMocks private PedidoServiceImpl pedidoService;

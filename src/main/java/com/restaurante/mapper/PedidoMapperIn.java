@@ -6,14 +6,14 @@ import com.restaurante.model.domain.EstadoPedido;
 import com.restaurante.model.dto.request.PedidoRequestDTO;
 import com.restaurante.model.dto.request.ItemPedidoRequestDTO;
 import com.restaurante.model.domain.Plato;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Component
-public class PedidoMapperIn {
+@Mapper(componentModel = "spring")
+public interface PedidoMapperIn {
 
-    public Pedido toDomain(PedidoRequestDTO dto, List<Plato> platos) {
+    default Pedido toDomain(PedidoRequestDTO dto, List<Plato> platos) {
         Pedido pedido = new Pedido();
         pedido.setIdMesa(dto.idMesa());
         pedido.setEstado(EstadoPedido.RECIBIDO);
