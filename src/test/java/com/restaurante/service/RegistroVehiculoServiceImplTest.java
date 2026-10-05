@@ -18,7 +18,7 @@ class RegistroVehiculoServiceImplTest {
     @Mock private RegistroVehiculoRepositoryJPA registroRepository;
     @Spy private RegistroVehiculoEntityMapper entityMapper = new RegistroVehiculoEntityMapperImpl();
     @Spy private RegistroVehiculoMapperIn mapperIn = new RegistroVehiculoMapperInImpl();
-    @Spy private RegistroVehiculoMapperOut mapperOut = new RegistroVehiculoMapperOut();
+    @Spy private RegistroVehiculoMapperOut mapperOut = new RegistroVehiculoMapperOutImpl();
     @InjectMocks private RegistroVehiculoServiceImpl vehiculoService;
 
     @Test

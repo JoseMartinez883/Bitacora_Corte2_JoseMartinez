@@ -2,19 +2,10 @@ package com.restaurante.mapper;
 
 import com.restaurante.model.domain.RegistroVehiculo;
 import com.restaurante.model.dto.response.RegistroVehiculoResponseDTO;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 
-@Component
-public class RegistroVehiculoMapperOut {
+@Mapper(componentModel = "spring")
+public interface RegistroVehiculoMapperOut {
 
-    public RegistroVehiculoResponseDTO toResponse(RegistroVehiculo registro) {
-        return new RegistroVehiculoResponseDTO(
-                registro.getId(),
-                registro.getPlaca(),
-                registro.getEntrada(),
-                registro.getSalida(),
-                registro.getEstado(),
-                registro.getCobro()
-        );
-    }
+    RegistroVehiculoResponseDTO toResponse(RegistroVehiculo registro);
 }
