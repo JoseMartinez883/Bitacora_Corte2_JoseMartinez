@@ -1,6 +1,6 @@
 package com.restaurante.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.restaurante.model.dto.response.MesaResponseDTO;
 import com.restaurante.service.MesaService;
 import org.junit.jupiter.api.Test;
