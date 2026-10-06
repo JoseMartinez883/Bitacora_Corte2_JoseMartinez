@@ -175,3 +175,52 @@ Describe los bloques principales del sistema y las interacciones entre Controlad
 <p align="center">
   <img src="docs/images/DiagramComponentSpecific.png" alt="Bella Ciao Componentes Específicos" width="600" />
 </p>
+
+---
+
+## Dockerización (Entorno Local)
+
+Para levantar el ecosistema completo en contenedores (API, PostgreSQL y MongoDB), asegúrese de tener **Docker Desktop** instalado.
+
+1. **Configurar el entorno:**
+   Cree un archivo `.env` en la raíz del proyecto basado en `.env.example`.
+2. **Levantar el stack:**
+   ```bash
+   docker compose up --build -d
+   ```
+
+### Variables de Entorno Requeridas
+- `SERVER_PORT`: Puerto donde corre la API.
+- `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`: Credenciales para PostgreSQL.
+- `MONGO_HOST`, `MONGO_PORT`, `MONGO_DB`: Credenciales para MongoDB.
+- `JWT_SECRET`: Llave secreta en Base64 para firmar los tokens JWT.
+
+### Link a Docker Hub
+- **Imagen publicada:** [Ver en Docker Hub](#)
+
+### Evidencias Docker
+
+---
+
+## Integración y Despliegue Continuo (CI/CD en Azure)
+
+### Entornos y Políticas de Despliegue
+- **QA:** Se actualiza automáticamente mediante push a las ramas `main` o `develop`.
+- **PROD:** Requiere un tag de versión (`v*.*.*`) y aprobación manual desde GitHub para ejecutarse.
+
+### Enlaces a la API desplegada
+- 🧪 **API en QA:** [Swagger UI QA](#)
+- 🚀 **API en PROD:** [Swagger UI PROD](#)
+
+### Secrets configurados en GitHub
+- `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`
+- `AZURE_CREDENTIALS`
+- `AZURE_WEBAPP_NAME_QA`, `AZURE_WEBAPP_NAME_PROD`
+- `JWT_SECRET_QA`, `JWT_SECRET_PROD`
+- `DB_PASSWORD_QA`, `DB_PASSWORD_PROD`
+
+### Diagrama de Despliegue
+
+### Evidencias CI/CD
+
+
