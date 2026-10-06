@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(MesaController.class)
+@org.springframework.context.annotation.Import({com.restaurante.security.SecurityConfig.class, com.restaurante.security.JwtAuthFilter.class})
 class MesaControllerTest {
 
     @Autowired
@@ -25,11 +26,18 @@ class MesaControllerTest {
     @MockitoBean
     private MesaService mesaService;
 
+    @MockitoBean
+    private com.restaurante.security.JwtUtil jwtUtil;
+
+    @MockitoBean
+    private com.restaurante.service.UsuarioDetailsService usuarioDetailsService;
+
     @Test
     void listarTodos_exitoso() throws Exception {
         when(mesaService.listarTodas()).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/v1/mesas"))
+        mockMvc.perform(get("/api/v1/mesas")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isOk());
     }
 
@@ -38,7 +46,8 @@ class MesaControllerTest {
         MesaResponseDTO res = new MesaResponseDTO(1L, 1, 4, com.restaurante.model.domain.EstadoMesa.DISPONIBLE, false);
         when(mesaService.obtenerMesaPorId(1L)).thenReturn(res);
 
-        mockMvc.perform(get("/api/v1/mesas/1"))
+        mockMvc.perform(get("/api/v1/mesas/1")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isOk());
     }
 
@@ -47,7 +56,8 @@ class MesaControllerTest {
         MesaResponseDTO res = new MesaResponseDTO(1L, 1, 4, com.restaurante.model.domain.EstadoMesa.OCUPADA, true);
         when(mesaService.abrirCuenta(1L)).thenReturn(res);
 
-        mockMvc.perform(patch("/api/v1/mesas/1/abrir-cuenta"))
+        mockMvc.perform(patch("/api/v1/mesas/1/abrir-cuenta")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isOk());
     }
 }

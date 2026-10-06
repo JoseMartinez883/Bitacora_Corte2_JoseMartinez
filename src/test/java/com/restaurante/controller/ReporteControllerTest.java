@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ReporteController.class)
+@org.springframework.context.annotation.Import({com.restaurante.security.SecurityConfig.class, com.restaurante.security.JwtAuthFilter.class})
 class ReporteControllerTest {
 
     @Autowired
@@ -22,11 +23,18 @@ class ReporteControllerTest {
     @MockitoBean
     private ReporteService reporteService;
 
+    @MockitoBean
+    private com.restaurante.security.JwtUtil jwtUtil;
+
+    @MockitoBean
+    private com.restaurante.service.UsuarioDetailsService usuarioDetailsService;
+
     @Test
     void resumenDiario_exitoso() throws Exception {
         when(reporteService.obtenerResumenDia()).thenReturn(Map.of());
 
-        mockMvc.perform(get("/api/v1/reportes/resumen"))
+        mockMvc.perform(get("/api/v1/reportes/resumen")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isOk());
     }
 
@@ -34,7 +42,8 @@ class ReporteControllerTest {
     void platosMasPopulares_exitoso() throws Exception {
         when(reporteService.obtenerPlatosPopulares()).thenReturn(Map.of());
 
-        mockMvc.perform(get("/api/v1/reportes/platos-populares"))
+        mockMvc.perform(get("/api/v1/reportes/platos-populares")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isOk());
     }
 
@@ -42,7 +51,8 @@ class ReporteControllerTest {
     void ingresosTotales_exitoso() throws Exception {
         when(reporteService.calcularIngresosTotales()).thenReturn(100.0);
 
-        mockMvc.perform(get("/api/v1/reportes/ingresos"))
+        mockMvc.perform(get("/api/v1/reportes/ingresos")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isOk());
     }
 }

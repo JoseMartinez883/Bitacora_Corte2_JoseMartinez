@@ -21,6 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CuentaController.class)
+@org.springframework.context.annotation.Import({com.restaurante.security.SecurityConfig.class, com.restaurante.security.JwtAuthFilter.class})
 class CuentaControllerTest {
 
     @Autowired
@@ -31,12 +32,19 @@ class CuentaControllerTest {
     @MockitoBean
     private CuentaService cuentaService;
 
+    @MockitoBean
+    private com.restaurante.security.JwtUtil jwtUtil;
+
+    @MockitoBean
+    private com.restaurante.service.UsuarioDetailsService usuarioDetailsService;
+
     @Test
     void obtenerCuentaActiva_exitoso() throws Exception {
         CuentaResponseDTO res = new CuentaResponseDTO(1L, 1L, com.restaurante.model.domain.EstadoCuenta.ABIERTA, List.of(), 0.0, java.time.LocalDateTime.now(), null, "EFECTIVO");
         when(cuentaService.obtenerCuentaActivaPorMesa(1L)).thenReturn(res);
 
-        mockMvc.perform(get("/api/v1/cuentas/mesa/1"))
+        mockMvc.perform(get("/api/v1/cuentas/mesa/1")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isOk());
     }
 
@@ -47,6 +55,7 @@ class CuentaControllerTest {
         when(cuentaService.registrarPago(eq(1L), any(PagoCuentaRequestDTO.class))).thenReturn(res);
 
         mockMvc.perform(post("/api/v1/cuentas/mesa/1/pago")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
