@@ -28,6 +28,7 @@ class ReservaServiceImplTest {
 
     @Test
     void crearReserva_exitoso() {
+        mockSecurityContext();
         com.restaurante.persistence.entity.ReservaEntity entity = new com.restaurante.persistence.entity.ReservaEntity();
         entity.setId(1L);
         entity.setCliente("Juan");
@@ -40,6 +41,7 @@ class ReservaServiceImplTest {
 
     @Test
     void obtenerReservaPorId_exitoso() {
+        mockSecurityContext();
         com.restaurante.persistence.entity.ReservaEntity entity = new com.restaurante.persistence.entity.ReservaEntity();
         entity.setId(1L);
         when(reservaRepository.findById(1L)).thenReturn(Optional.of(entity));
@@ -48,9 +50,11 @@ class ReservaServiceImplTest {
 
     @Test
     void actualizar_exitoso() {
+        mockSecurityContext();
         com.restaurante.persistence.entity.ReservaEntity entity = new com.restaurante.persistence.entity.ReservaEntity();
         entity.setId(1L);
         when(reservaRepository.existsById(1L)).thenReturn(true);
+        when(reservaRepository.findById(1L)).thenReturn(Optional.of(entity));
         when(reservaRepository.save(any())).thenAnswer(i -> i.getArgument(0));
         
         ReservaRequestDTO dto = new ReservaRequestDTO(1L, "Juan", LocalDateTime.now().plusDays(1), 4);
@@ -59,6 +63,7 @@ class ReservaServiceImplTest {
 
     @Test
     void cancelarReserva_exitoso() {
+        mockSecurityContext();
         com.restaurante.persistence.entity.ReservaEntity entity = new com.restaurante.persistence.entity.ReservaEntity();
         entity.setId(1L);
         entity.setActiva(true);
@@ -89,5 +94,14 @@ class ReservaServiceImplTest {
         ReservaRequestDTO dto = new ReservaRequestDTO(1L, "Juan", LocalDateTime.now().plusDays(1), 4);
         assertThrows(ReservaNotFoundException.class, () -> reservaService.actualizar(99L, dto));
         verify(reservaRepository, never()).save(any());
+    }
+
+    private void mockSecurityContext() {
+        org.springframework.security.core.Authentication auth = mock(org.springframework.security.core.Authentication.class);
+        lenient().when(auth.getName()).thenReturn("admin");
+        lenient().when(auth.getAuthorities()).thenReturn((java.util.Collection) java.util.List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_ADMIN")));
+        org.springframework.security.core.context.SecurityContext context = mock(org.springframework.security.core.context.SecurityContext.class);
+        lenient().when(context.getAuthentication()).thenReturn(auth);
+        org.springframework.security.core.context.SecurityContextHolder.setContext(context);
     }
 }

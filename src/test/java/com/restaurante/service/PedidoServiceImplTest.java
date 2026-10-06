@@ -37,6 +37,7 @@ class PedidoServiceImplTest {
 
     @Test
     void obtenerPedidoPorId_exitoso() {
+        mockSecurityContext();
         PedidoEntity pe = new PedidoEntity(); pe.setId(1L); pe.setItems(List.of()); pe.setEstado(com.restaurante.model.domain.EstadoPedido.EN_PREPARACION);
         when(pedidoRepository.findById(1L)).thenReturn(Optional.of(pe));
         assertDoesNotThrow(() -> pedidoService.obtenerPedidoPorId(1L));
@@ -44,6 +45,7 @@ class PedidoServiceImplTest {
 
     @Test
     void crearPedido_exitoso() {
+        mockSecurityContext();
         PedidoRequestDTO dto = new PedidoRequestDTO(1L, List.of(new ItemPedidoRequestDTO(1L, 2, List.of())));
         PlatoEntity plato = new PlatoEntity(); plato.setId(1L); plato.setPrecio(10.0);
         when(platoRepository.findById(1L)).thenReturn(Optional.of(plato));
@@ -56,6 +58,7 @@ class PedidoServiceImplTest {
 
     @Test
     void cambiarEstado_exitoso() {
+        mockSecurityContext();
         PedidoEntity pe = new PedidoEntity(); pe.setId(1L); pe.setItems(List.of()); pe.setEstado(com.restaurante.model.domain.EstadoPedido.RECIBIDO);
         when(pedidoRepository.findById(1L)).thenReturn(Optional.of(pe));
         when(pedidoRepository.save(any())).thenReturn(pe);
@@ -80,6 +83,7 @@ class PedidoServiceImplTest {
 
     @Test
     void cambiarEstado_lanzaExcepcionSiNoExiste() {
+        mockSecurityContext();
         when(pedidoRepository.findById(99L)).thenReturn(Optional.empty());
         CambioEstadoRequestDTO req = new CambioEstadoRequestDTO(com.restaurante.model.domain.EstadoPedido.EN_PREPARACION, "1");
         assertThrows(PedidoNotFoundException.class, () -> pedidoService.cambiarEstado(99L, req));
@@ -89,5 +93,14 @@ class PedidoServiceImplTest {
     void eliminar_lanzaExcepcionSiNoExiste() {
         when(pedidoRepository.existsById(99L)).thenReturn(false);
         assertThrows(PedidoNotFoundException.class, () -> pedidoService.eliminar(99L));
+    }
+
+    private void mockSecurityContext() {
+        org.springframework.security.core.Authentication auth = mock(org.springframework.security.core.Authentication.class);
+        lenient().when(auth.getName()).thenReturn("admin");
+        lenient().when(auth.getAuthorities()).thenReturn((java.util.Collection) List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_ADMIN")));
+        org.springframework.security.core.context.SecurityContext context = mock(org.springframework.security.core.context.SecurityContext.class);
+        lenient().when(context.getAuthentication()).thenReturn(auth);
+        org.springframework.security.core.context.SecurityContextHolder.setContext(context);
     }
 }

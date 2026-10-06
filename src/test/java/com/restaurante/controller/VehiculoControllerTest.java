@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(VehiculoController.class)
+@org.springframework.context.annotation.Import({com.restaurante.security.SecurityConfig.class, com.restaurante.security.JwtAuthFilter.class})
 class VehiculoControllerTest {
 
     @Autowired
@@ -30,6 +31,12 @@ class VehiculoControllerTest {
     @MockitoBean
     private RegistroVehiculoService vehiculoService;
 
+    @MockitoBean
+    private com.restaurante.security.JwtUtil jwtUtil;
+
+    @MockitoBean
+    private com.restaurante.service.UsuarioDetailsService usuarioDetailsService;
+
     @Test
     void registrarEntrada_exitoso() throws Exception {
         RegistroVehiculoRequestDTO req = new RegistroVehiculoRequestDTO("ABC-123");
@@ -37,6 +44,7 @@ class VehiculoControllerTest {
         when(vehiculoService.registrarEntrada(any(RegistroVehiculoRequestDTO.class))).thenReturn(res);
 
         mockMvc.perform(post("/api/v1/vehiculos/entrada")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated());
@@ -47,7 +55,8 @@ class VehiculoControllerTest {
         RegistroVehiculoResponseDTO res = new RegistroVehiculoResponseDTO(1L, "ABC-123", LocalDateTime.now(), LocalDateTime.now().plusHours(1), "INACTIVO", 5000.0);
         when(vehiculoService.registrarSalida(1L)).thenReturn(res);
 
-        mockMvc.perform(patch("/api/v1/vehiculos/1/salida"))
+        mockMvc.perform(patch("/api/v1/vehiculos/1/salida")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isOk());
     }
 
@@ -55,7 +64,8 @@ class VehiculoControllerTest {
     void listarActivos_exitoso() throws Exception {
         when(vehiculoService.listarActivos()).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/v1/vehiculos/activos"))
+        mockMvc.perform(get("/api/v1/vehiculos/activos")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isOk());
     }
 }
