@@ -22,6 +22,12 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    // ---- 403 Forbidden ----
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAccessDenied(org.springframework.security.access.AccessDeniedException ex) {
+        return buildResponse(HttpStatus.FORBIDDEN, "Acceso denegado: No tienes el rol necesario para esta accion.");
+    }
+
     // ---- 409 Conflict ----
     @ExceptionHandler({PlatoAlreadyExistException.class, MesaNoDisponibleException.class,
                         TransicionEstadoInvalidaException.class})
