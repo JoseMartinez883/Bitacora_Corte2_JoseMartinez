@@ -21,6 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ReservaController.class)
+@org.springframework.context.annotation.Import({com.restaurante.security.SecurityConfig.class, com.restaurante.security.JwtAuthFilter.class})
 class ReservaControllerTest {
 
     @Autowired
@@ -31,6 +32,12 @@ class ReservaControllerTest {
     @MockitoBean
     private ReservaService reservaService;
 
+    @MockitoBean
+    private com.restaurante.security.JwtUtil jwtUtil;
+
+    @MockitoBean
+    private com.restaurante.service.UsuarioDetailsService usuarioDetailsService;
+
     @Test
     void crearReserva_exitoso() throws Exception {
         ReservaRequestDTO req = new ReservaRequestDTO(1L, "Cliente", LocalDateTime.now().plusDays(1), 4);
@@ -38,6 +45,7 @@ class ReservaControllerTest {
         when(reservaService.crearReserva(any(ReservaRequestDTO.class))).thenReturn(res);
 
         mockMvc.perform(post("/api/v1/reservas")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("test@cliente.com").roles("CLIENTE"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated());
@@ -47,7 +55,8 @@ class ReservaControllerTest {
     void listarTodas_exitoso() throws Exception {
         when(reservaService.listarTodas()).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/v1/reservas"))
+        mockMvc.perform(get("/api/v1/reservas")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("test@cliente.com").roles("CLIENTE")))
                 .andExpect(status().isOk());
     }
 
@@ -56,7 +65,8 @@ class ReservaControllerTest {
         ReservaResponseDTO res = new ReservaResponseDTO(1L, 1L, "Cliente", LocalDateTime.now().plusDays(1), 4, true);
         when(reservaService.obtenerReservaPorId(1L)).thenReturn(res);
 
-        mockMvc.perform(get("/api/v1/reservas/1"))
+        mockMvc.perform(get("/api/v1/reservas/1")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("test@cliente.com").roles("CLIENTE")))
                 .andExpect(status().isOk());
     }
 
@@ -65,7 +75,8 @@ class ReservaControllerTest {
         ReservaResponseDTO res = new ReservaResponseDTO(1L, 1L, "Cliente", LocalDateTime.now().plusDays(1), 4, false);
         when(reservaService.cancelarReserva(1L)).thenReturn(res);
 
-        mockMvc.perform(delete("/api/v1/reservas/1/cancelar"))
+        mockMvc.perform(delete("/api/v1/reservas/1/cancelar")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("test@cliente.com").roles("CLIENTE")))
                 .andExpect(status().isOk());
     }
 
@@ -76,6 +87,7 @@ class ReservaControllerTest {
         when(reservaService.actualizar(eq(1L), any(ReservaRequestDTO.class))).thenReturn(res);
 
         mockMvc.perform(put("/api/v1/reservas/1")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("test@cliente.com").roles("CLIENTE"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
