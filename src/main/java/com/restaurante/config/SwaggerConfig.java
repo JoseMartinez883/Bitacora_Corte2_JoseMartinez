@@ -2,6 +2,9 @@ package com.restaurante.config;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
@@ -11,7 +14,14 @@ import org.springframework.context.annotation.Configuration;
                 version = "v1.0",
                 description = "API REST para gestión operativa de restaurante.",
                 contact = @Contact(name = "Equipo DOSW", email = "jose.martinez@mail.escuelaing.edu.co")
-        )
+        ),
+        security = @SecurityRequirement(name = "BearerAuth")
+)
+@SecurityScheme(
+        name = "BearerAuth",
+        type = SecuritySchemeType.HTTP,
+        scheme = "bearer",
+        bearerFormat = "JWT"
 )
 public class SwaggerConfig { }
 
