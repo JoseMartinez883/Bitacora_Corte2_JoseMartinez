@@ -21,6 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PlatoController.class)
+@org.springframework.context.annotation.Import({com.restaurante.security.SecurityConfig.class, com.restaurante.security.JwtAuthFilter.class})
 class PlatoControllerTest {
 
     @Autowired
@@ -31,6 +32,12 @@ class PlatoControllerTest {
     @MockitoBean
     private PlatoService platoService;
 
+    @MockitoBean
+    private com.restaurante.security.JwtUtil jwtUtil;
+
+    @MockitoBean
+    private com.restaurante.service.UsuarioDetailsService usuarioDetailsService;
+
     @Test
     void crearPlato_exitoso() throws Exception {
         PlatoRequestDTO req = new PlatoRequestDTO("Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), "Rica pizza");
@@ -39,6 +46,7 @@ class PlatoControllerTest {
         when(platoService.crearPlato(any(PlatoRequestDTO.class))).thenReturn(res);
 
         mockMvc.perform(post("/api/v1/platos")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated())
@@ -50,7 +58,8 @@ class PlatoControllerTest {
     void listarTodos_exitoso() throws Exception {
         when(platoService.listarTodos()).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/v1/platos"))
+        mockMvc.perform(get("/api/v1/platos")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
@@ -60,7 +69,8 @@ class PlatoControllerTest {
         PlatoResponseDTO res = new PlatoResponseDTO(1L, "Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), "Rica pizza", true, true);
         when(platoService.obtenerPlatoPorId(1L)).thenReturn(res);
 
-        mockMvc.perform(get("/api/v1/platos/1"))
+        mockMvc.perform(get("/api/v1/platos/1")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1));
     }
@@ -73,6 +83,7 @@ class PlatoControllerTest {
         when(platoService.actualizarPlato(eq(1L), any(PlatoRequestDTO.class))).thenReturn(res);
 
         mockMvc.perform(put("/api/v1/platos/1")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
@@ -83,7 +94,8 @@ class PlatoControllerTest {
         PlatoResponseDTO res = new PlatoResponseDTO(1L, "Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), "Rica pizza", false, true);
         when(platoService.desactivarPlato(1L)).thenReturn(res);
 
-        mockMvc.perform(patch("/api/v1/platos/1/desactivar"))
+        mockMvc.perform(patch("/api/v1/platos/1/desactivar")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isOk());
     }
 
@@ -92,13 +104,15 @@ class PlatoControllerTest {
         PlatoResponseDTO res = new PlatoResponseDTO(1L, "Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), "Rica pizza", true, false);
         when(platoService.marcarAgotado(1L)).thenReturn(res);
 
-        mockMvc.perform(patch("/api/v1/platos/1/agotado"))
+        mockMvc.perform(patch("/api/v1/platos/1/agotado")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("CHEF")))
                 .andExpect(status().isOk());
     }
 
     @Test
     void eliminarPlato_exitoso() throws Exception {
-        mockMvc.perform(delete("/api/v1/platos/1"))
+        mockMvc.perform(delete("/api/v1/platos/1")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isNoContent());
         verify(platoService).eliminar(1L);
     }
