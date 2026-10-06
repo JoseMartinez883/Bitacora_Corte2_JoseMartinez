@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PedidoController.class)
+@org.springframework.context.annotation.Import({com.restaurante.security.SecurityConfig.class, com.restaurante.security.JwtAuthFilter.class})
 class PedidoControllerTest {
 
     @Autowired
@@ -34,6 +35,12 @@ class PedidoControllerTest {
     @MockitoBean
     private PedidoService pedidoService;
 
+    @MockitoBean
+    private com.restaurante.security.JwtUtil jwtUtil;
+
+    @MockitoBean
+    private com.restaurante.service.UsuarioDetailsService usuarioDetailsService;
+
     @Test
     void crearPedido_exitoso() throws Exception {
         PedidoRequestDTO req = new PedidoRequestDTO(1L, List.of(new ItemPedidoRequestDTO(1L, 1, List.of())));
@@ -42,6 +49,7 @@ class PedidoControllerTest {
         when(pedidoService.crearPedido(any(PedidoRequestDTO.class))).thenReturn(res);
 
         mockMvc.perform(post("/api/v1/pedidos")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("mesero").roles("MESERO"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated())
@@ -53,7 +61,8 @@ class PedidoControllerTest {
         PedidoResponseDTO res = new PedidoResponseDTO(1L, 1L, com.restaurante.model.domain.EstadoPedido.EN_PREPARACION, List.of(), LocalDateTime.now());
         when(pedidoService.obtenerPedidoPorId(1L)).thenReturn(res);
 
-        mockMvc.perform(get("/api/v1/pedidos/1"))
+        mockMvc.perform(get("/api/v1/pedidos/1")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1));
     }
@@ -62,7 +71,8 @@ class PedidoControllerTest {
     void listarTodos_exitoso() throws Exception {
         when(pedidoService.listarTodos()).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/v1/pedidos"))
+        mockMvc.perform(get("/api/v1/pedidos")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
@@ -72,6 +82,7 @@ class PedidoControllerTest {
         when(pedidoService.listarPorEstado(com.restaurante.model.domain.EstadoPedido.EN_PREPARACION)).thenReturn(List.of());
 
         mockMvc.perform(get("/api/v1/pedidos/cocina")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("chef").roles("CHEF"))
                 .param("estado", "EN_PREPARACION"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
@@ -85,6 +96,7 @@ class PedidoControllerTest {
         when(pedidoService.cambiarEstado(eq(1L), any(CambioEstadoRequestDTO.class))).thenReturn(res);
 
         mockMvc.perform(patch("/api/v1/pedidos/1/estado")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("chef").roles("CHEF"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
@@ -92,7 +104,8 @@ class PedidoControllerTest {
 
     @Test
     void eliminarPedido_exitoso() throws Exception {
-        mockMvc.perform(delete("/api/v1/pedidos/1"))
+        mockMvc.perform(delete("/api/v1/pedidos/1")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isNoContent());
         verify(pedidoService).eliminar(1L);
     }
