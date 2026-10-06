@@ -44,7 +44,7 @@ class GlobalExceptionHandlerTest {
         IllegalArgumentException ex = new IllegalArgumentException("Supera limite");
         ResponseEntity<Map<String, Object>> response = handler.handleBusinessRule(ex);
 
-        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, response.getStatusCode());
+        assertEquals(HttpStatus.valueOf(422), response.getStatusCode());
         assertEquals("Supera limite", response.getBody().get("message"));
     }
 
@@ -61,6 +61,7 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
+        @SuppressWarnings("unchecked")
         List<String> messages = (List<String>) response.getBody().get("messages");
         assertEquals("field1: Error message 1", messages.get(0));
     }

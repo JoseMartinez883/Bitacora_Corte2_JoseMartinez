@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({LimiteToppingsExcedidoException.class, PlatoNoDisponibleException.class,
                         IllegalArgumentException.class, IllegalStateException.class})
     public ResponseEntity<Map<String, Object>> handleBusinessRule(RuntimeException ex) {
-        return buildResponse(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        return buildResponse(HttpStatus.valueOf(422), ex.getMessage());
     }
 
     // ---- 400 Bad Request (@Valid) ----
