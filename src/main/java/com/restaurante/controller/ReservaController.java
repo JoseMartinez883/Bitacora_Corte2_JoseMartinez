@@ -16,6 +16,7 @@ import java.util.List;
 @RequestMapping("/api/v1/reservas")
 @RequiredArgsConstructor
 @Tag(name = "Reservas", description = "Gestión de reservas de mesa")
+@org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MESERO', 'CLIENTE')")
 public class ReservaController {
 
     private final ReservaService reservaService;

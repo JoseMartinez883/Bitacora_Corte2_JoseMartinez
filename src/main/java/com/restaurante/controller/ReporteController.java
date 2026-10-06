@@ -14,6 +14,7 @@ import java.util.Map;
 @RequestMapping("/api/v1/reportes")
 @RequiredArgsConstructor
 @Tag(name = "Reportes")
+@org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
 public class ReporteController {
     private final ReporteService reporteService;
 

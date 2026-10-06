@@ -8,6 +8,7 @@ public class Reserva {
 
     private Long id;
     private Long idMesa;
+    private Long usuarioId;
     private String cliente;
     private LocalDateTime fechaHora;
     private Integer comensales;

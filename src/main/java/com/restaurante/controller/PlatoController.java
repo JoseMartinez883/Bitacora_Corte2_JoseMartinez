@@ -21,24 +21,28 @@ public class PlatoController {
     private final PlatoService platoService;
 
     @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Crear un plato", description = "Crea un nuevo plato. masa y salsa obligatorias. máx 5 toppings.")
     public ResponseEntity<PlatoResponseDTO> crearPlato(@Valid @RequestBody PlatoRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(platoService.crearPlato(dto));
     }
 
     @GetMapping
+    @org.springframework.security.access.prepost.PreAuthorize("isAuthenticated()")
     @Operation(summary = "Listar todos los platos", description = "Retorna todos los platos incluyendo inactivos (vista admin).")
     public ResponseEntity<List<PlatoResponseDTO>> listarTodos() {
         return ResponseEntity.ok(platoService.listarTodos());
     }
 
     @GetMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("isAuthenticated()")
     @Operation(summary = "Obtener plato por ID")
     public ResponseEntity<PlatoResponseDTO> obtenerPorId(@PathVariable Long id) {
         return ResponseEntity.ok(platoService.obtenerPlatoPorId(id));
     }
 
     @PutMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Actualizar un plato")
     public ResponseEntity<PlatoResponseDTO> actualizarPlato(@PathVariable Long id,
                                                              @Valid @RequestBody PlatoRequestDTO dto) {
@@ -46,12 +50,14 @@ public class PlatoController {
     }
 
     @PatchMapping("/{id}/desactivar")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Desactivar un plato", description = "desactiva sin borrar historial.")
     public ResponseEntity<PlatoResponseDTO> desactivarPlato(@PathVariable Long id) {
         return ResponseEntity.ok(platoService.desactivarPlato(id));
     }
 
     @PatchMapping("/{id}/agotado")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'CHEF')")
     @Operation(summary = "Marcar plato como agotado", description = "marca como no disponible por falta de ingredientes.")
     public ResponseEntity<PlatoResponseDTO> marcarAgotado(@PathVariable Long id) {
         return ResponseEntity.ok(platoService.marcarAgotado(id));
@@ -59,6 +65,7 @@ public class PlatoController {
 
     @Operation(summary = "Eliminar plato")
     @DeleteMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> eliminarPlato(@PathVariable Long id) {
         platoService.eliminar(id);

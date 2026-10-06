@@ -23,30 +23,35 @@ public class PedidoController {
     private final PedidoService pedidoService;
 
     @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MESERO')")
     @Operation(summary = "Crear pedido", description = "crea el pedido y lo envía a cocina en estado RECIBIDO.")
     public ResponseEntity<PedidoResponseDTO> crearPedido(@Valid @RequestBody PedidoRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(pedidoService.crearPedido(dto));
     }
 
     @GetMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MESERO', 'CHEF')")
     @Operation(summary = "Obtener pedido por ID")
     public ResponseEntity<PedidoResponseDTO> obtenerPorId(@PathVariable Long id) {
         return ResponseEntity.ok(pedidoService.obtenerPedidoPorId(id));
     }
 
     @GetMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MESERO', 'CHEF')")
     @Operation(summary = "Listar todos los pedidos")
     public ResponseEntity<List<PedidoResponseDTO>> listarTodos() {
         return ResponseEntity.ok(pedidoService.listarTodos());
     }
 
     @GetMapping("/cocina")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'CHEF')")
     @Operation(summary = "Tablero de cocina por estado", description = "filtra pedidos por estado para el display de cocina.")
     public ResponseEntity<List<PedidoResponseDTO>> tableroCocina(@RequestParam EstadoPedido estado) {
         return ResponseEntity.ok(pedidoService.listarPorEstado(estado));
     }
 
     @PatchMapping("/{id}/estado")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MESERO', 'CHEF')")
     @Operation(summary = "Avanzar estado del pedido", description = "transición secuencial estricta de estados. requiere idOperario.")
     public ResponseEntity<PedidoResponseDTO> cambiarEstado(@PathVariable Long id,
                                                             @Valid @RequestBody CambioEstadoRequestDTO dto) {
@@ -55,6 +60,7 @@ public class PedidoController {
 
     @Operation(summary = "Eliminar pedido")
     @DeleteMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> eliminarPedido(@PathVariable Long id) {
         pedidoService.eliminar(id);

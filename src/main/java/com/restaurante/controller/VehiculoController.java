@@ -16,6 +16,7 @@ import java.util.List;
 @RequestMapping("/api/v1/vehiculos")
 @RequiredArgsConstructor
 @Tag(name = "Vehículos / Parqueadero", description = "Control de entrada y salida del parqueadero")
+@org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
 public class VehiculoController {
 
     private final RegistroVehiculoService vehiculoService;

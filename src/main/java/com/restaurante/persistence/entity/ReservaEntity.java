@@ -14,6 +14,7 @@ public class ReservaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long idMesa;
+    private Long usuarioId;
     private String cliente;
     private LocalDateTime fechaHora;
     private Integer comensales;

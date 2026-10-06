@@ -19,12 +19,14 @@ public class CuentaController {
     private final CuentaService cuentaService;
 
     @GetMapping("/mesa/{idMesa}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MESERO')")
     @Operation(summary = "Ver cuenta activa de una mesa", description = "Calcula el total en tiempo real.")
     public ResponseEntity<CuentaResponseDTO> obtenerCuentaActiva(@PathVariable Long idMesa) {
         return ResponseEntity.ok(cuentaService.obtenerCuentaActivaPorMesa(idMesa));
     }
 
     @PostMapping("/mesa/{idMesa}/pago")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MESERO')")
     @Operation(summary = "Registrar pago y cerrar cuenta", description = "cierra la cuenta y libera la mesa.")
     public ResponseEntity<CuentaResponseDTO> registrarPago(@PathVariable Long idMesa,
                                                             @Valid @RequestBody PagoCuentaRequestDTO dto) {

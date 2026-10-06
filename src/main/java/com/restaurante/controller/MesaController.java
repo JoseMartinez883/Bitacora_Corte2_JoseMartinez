@@ -13,6 +13,7 @@ import java.util.List;
 @RequestMapping("/api/v1/mesas")
 @RequiredArgsConstructor
 @Tag(name = "Mesas", description = "Estado y disponibilidad de las mesas del salón")
+@org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MESERO')")
 public class MesaController {
 
     private final MesaService mesaService;

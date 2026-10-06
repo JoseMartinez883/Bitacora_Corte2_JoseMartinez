@@ -70,6 +70,18 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public PedidoResponseDTO cambiarEstado(Long id, CambioEstadoRequestDTO dto) {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        boolean isChef = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_CHEF"));
+        boolean isMesero = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_MESERO"));
+        boolean isAdmin = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (dto.estadoDestino() == EstadoPedido.EN_PREPARACION || dto.estadoDestino() == EstadoPedido.LISTO) {
+            if (!isChef && !isAdmin) throw new org.springframework.security.access.AccessDeniedException("Solo el Chef puede cambiar a este estado.");
+        }
+        if (dto.estadoDestino() == EstadoPedido.ENTREGADO) {
+            if (!isMesero && !isAdmin) throw new org.springframework.security.access.AccessDeniedException("Solo el Mesero puede entregar el pedido.");
+        }
+
         Pedido pedido = pedidoRepository.findById(id).map(pedidoEntityMapper::toDomain).orElseThrow(() -> new PedidoNotFoundException(id));
         String estAnt = pedido.getEstado().name();
         pedido.cambiarEstado(dto.estadoDestino());
