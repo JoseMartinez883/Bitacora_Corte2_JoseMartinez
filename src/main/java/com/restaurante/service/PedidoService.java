@@ -6,12 +6,14 @@ import com.restaurante.model.dto.response.PedidoResponseDTO;
 import com.restaurante.model.domain.EstadoPedido;
 import java.util.List;
 
+import java.util.UUID;
+
 public interface PedidoService {
     PedidoResponseDTO crearPedido(PedidoRequestDTO dto);
-    PedidoResponseDTO obtenerPedidoPorId(Long id);
+    PedidoResponseDTO obtenerPedidoPorId(UUID id);
     List<PedidoResponseDTO> listarTodos();
     List<PedidoResponseDTO> listarPorEstado(EstadoPedido estado);
-    PedidoResponseDTO cambiarEstado(Long id, CambioEstadoRequestDTO dto);
-    void eliminar(Long id);
-    PedidoResponseDTO eliminarItemPedido(Long idPedido, Long idItem);
+    PedidoResponseDTO cambiarEstado(UUID id, CambioEstadoRequestDTO dto);
+    void eliminar(UUID id);
+    PedidoResponseDTO eliminarItemPedido(UUID idPedido, Long idItem);
 }

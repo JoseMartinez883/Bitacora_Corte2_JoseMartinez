@@ -15,7 +15,7 @@ public class EventoPedidoDocument {
     @Id
     private String id; // Mongo autogenera un UUID veloz
     
-    private Long idPedido;
+    private java.util.UUID idPedido;
     private String estadoAnterior;
     private String estadoNuevo;
     private String usuarioQueCambio;

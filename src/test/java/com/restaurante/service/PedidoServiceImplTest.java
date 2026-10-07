@@ -11,6 +11,8 @@ import com.restaurante.mapper.*;
 import com.restaurante.persistence.entity.*;
 import com.restaurante.repository.*;
 
+import java.util.UUID;
+
 import com.restaurante.validator.PlatoValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,19 +40,21 @@ class PedidoServiceImplTest {
     @Test
     void obtenerPedidoPorId_exitoso() {
         mockSecurityContext();
-        PedidoEntity pe = new PedidoEntity(); pe.setId(1L); pe.setItems(List.of()); pe.setEstado(com.restaurante.model.domain.EstadoPedido.EN_PREPARACION);
-        when(pedidoRepository.findById(1L)).thenReturn(Optional.of(pe));
-        assertDoesNotThrow(() -> pedidoService.obtenerPedidoPorId(1L));
+        UUID id = UUID.randomUUID();
+        PedidoEntity pe = new PedidoEntity(); pe.setId(id); pe.setItems(List.of()); pe.setEstado(com.restaurante.model.domain.EstadoPedido.EN_PREPARACION);
+        when(pedidoRepository.findById(id)).thenReturn(Optional.of(pe));
+        assertDoesNotThrow(() -> pedidoService.obtenerPedidoPorId(id));
     }
 
     @Test
     void crearPedido_exitoso() {
         mockSecurityContext();
+        UUID id = UUID.randomUUID();
         PedidoRequestDTO dto = new PedidoRequestDTO(1L, List.of(new ItemPedidoRequestDTO(1L, 2, List.of())));
         PlatoEntity plato = new PlatoEntity(); plato.setId(1L); plato.setPrecio(10.0);
         when(platoRepository.findById(1L)).thenReturn(Optional.of(plato));
         
-        PedidoEntity pe = new PedidoEntity(); pe.setId(1L); pe.setItems(List.of()); pe.setEstado(com.restaurante.model.domain.EstadoPedido.RECIBIDO);
+        PedidoEntity pe = new PedidoEntity(); pe.setId(id); pe.setItems(List.of()); pe.setEstado(com.restaurante.model.domain.EstadoPedido.RECIBIDO);
         when(pedidoRepository.save(any())).thenReturn(pe);
         
         assertNotNull(pedidoService.crearPedido(dto));
@@ -59,11 +63,12 @@ class PedidoServiceImplTest {
     @Test
     void cambiarEstado_exitoso() {
         mockSecurityContext();
-        PedidoEntity pe = new PedidoEntity(); pe.setId(1L); pe.setItems(List.of()); pe.setEstado(com.restaurante.model.domain.EstadoPedido.RECIBIDO);
-        when(pedidoRepository.findById(1L)).thenReturn(Optional.of(pe));
+        UUID id = UUID.randomUUID();
+        PedidoEntity pe = new PedidoEntity(); pe.setId(id); pe.setItems(List.of()); pe.setEstado(com.restaurante.model.domain.EstadoPedido.RECIBIDO);
+        when(pedidoRepository.findById(id)).thenReturn(Optional.of(pe));
         when(pedidoRepository.save(any())).thenReturn(pe);
         
-        assertNotNull(pedidoService.cambiarEstado(1L, new CambioEstadoRequestDTO(com.restaurante.model.domain.EstadoPedido.EN_PREPARACION, "motivo")));
+        assertNotNull(pedidoService.cambiarEstado(id, new CambioEstadoRequestDTO(com.restaurante.model.domain.EstadoPedido.EN_PREPARACION, "motivo")));
     }
 
     @Test
@@ -77,22 +82,25 @@ class PedidoServiceImplTest {
 
     @Test
     void obtenerPedidoPorId_lanzaExcepcionSiNoExiste() {
-        when(pedidoRepository.findById(99L)).thenReturn(Optional.empty());
-        assertThrows(PedidoNotFoundException.class, () -> pedidoService.obtenerPedidoPorId(99L));
+        UUID id = UUID.randomUUID();
+        when(pedidoRepository.findById(id)).thenReturn(Optional.empty());
+        assertThrows(PedidoNotFoundException.class, () -> pedidoService.obtenerPedidoPorId(id));
     }
 
     @Test
     void cambiarEstado_lanzaExcepcionSiNoExiste() {
         mockSecurityContext();
-        when(pedidoRepository.findById(99L)).thenReturn(Optional.empty());
+        UUID id = UUID.randomUUID();
+        when(pedidoRepository.findById(id)).thenReturn(Optional.empty());
         CambioEstadoRequestDTO req = new CambioEstadoRequestDTO(com.restaurante.model.domain.EstadoPedido.EN_PREPARACION, "1");
-        assertThrows(PedidoNotFoundException.class, () -> pedidoService.cambiarEstado(99L, req));
+        assertThrows(PedidoNotFoundException.class, () -> pedidoService.cambiarEstado(id, req));
     }
 
     @Test
     void eliminar_lanzaExcepcionSiNoExiste() {
-        when(pedidoRepository.existsById(99L)).thenReturn(false);
-        assertThrows(PedidoNotFoundException.class, () -> pedidoService.eliminar(99L));
+        UUID id = UUID.randomUUID();
+        when(pedidoRepository.existsById(id)).thenReturn(false);
+        assertThrows(PedidoNotFoundException.class, () -> pedidoService.eliminar(id));
     }
 
     private void mockSecurityContext() {

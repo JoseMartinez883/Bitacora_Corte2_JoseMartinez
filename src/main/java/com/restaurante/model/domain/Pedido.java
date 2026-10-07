@@ -5,11 +5,12 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public class Pedido {
 
-    private Long id;
+    private UUID id;
     private Long idMesa;
     private List<ItemPedido> items = new ArrayList<>();
     private EstadoPedido estado;

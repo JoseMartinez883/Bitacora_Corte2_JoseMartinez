@@ -4,9 +4,10 @@ import com.restaurante.persistence.entity.PedidoEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface PedidoRepositoryJPA extends JpaRepository<PedidoEntity, Long> {
+public interface PedidoRepositoryJPA extends JpaRepository<PedidoEntity, UUID> {
     List<PedidoEntity> findByIdMesa(Long idMesa);
     List<PedidoEntity> findByEstado(com.restaurante.model.domain.EstadoPedido estado);
     boolean existsByIdMesaAndEstadoNot(Long idMesa, com.restaurante.model.domain.EstadoPedido estado);

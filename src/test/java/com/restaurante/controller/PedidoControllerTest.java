@@ -14,7 +14,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -43,8 +45,9 @@ class PedidoControllerTest {
 
     @Test
     void crearPedido_exitoso() throws Exception {
+        UUID id = UUID.randomUUID();
         PedidoRequestDTO req = new PedidoRequestDTO(1L, List.of(new ItemPedidoRequestDTO(1L, 1, List.of())));
-        PedidoResponseDTO res = new PedidoResponseDTO(1L, 1L, com.restaurante.model.domain.EstadoPedido.EN_PREPARACION, List.of(), LocalDateTime.now());
+        PedidoResponseDTO res = new PedidoResponseDTO(id, 1L, com.restaurante.model.domain.EstadoPedido.EN_PREPARACION, List.of(), LocalDateTime.now());
 
         when(pedidoService.crearPedido(any(PedidoRequestDTO.class))).thenReturn(res);
 
@@ -53,18 +56,19 @@ class PedidoControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1));
+                .andExpect(jsonPath("$.id").value(id.toString()));
     }
 
     @Test
     void obtenerPorId_exitoso() throws Exception {
-        PedidoResponseDTO res = new PedidoResponseDTO(1L, 1L, com.restaurante.model.domain.EstadoPedido.EN_PREPARACION, List.of(), LocalDateTime.now());
-        when(pedidoService.obtenerPedidoPorId(1L)).thenReturn(res);
+        UUID id = UUID.randomUUID();
+        PedidoResponseDTO res = new PedidoResponseDTO(id, 1L, com.restaurante.model.domain.EstadoPedido.EN_PREPARACION, List.of(), LocalDateTime.now());
+        when(pedidoService.obtenerPedidoPorId(id)).thenReturn(res);
 
-        mockMvc.perform(get("/api/v1/pedidos/1")
+        mockMvc.perform(get("/api/v1/pedidos/" + id)
                 .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1));
+                .andExpect(jsonPath("$.id").value(id.toString()));
     }
 
     @Test
@@ -90,12 +94,13 @@ class PedidoControllerTest {
 
     @Test
     void cambiarEstado_exitoso() throws Exception {
+        UUID id = UUID.randomUUID();
         CambioEstadoRequestDTO req = new CambioEstadoRequestDTO(com.restaurante.model.domain.EstadoPedido.LISTO, "Test");
-        PedidoResponseDTO res = new PedidoResponseDTO(1L, 1L, com.restaurante.model.domain.EstadoPedido.LISTO, List.of(), LocalDateTime.now());
+        PedidoResponseDTO res = new PedidoResponseDTO(id, 1L, com.restaurante.model.domain.EstadoPedido.LISTO, List.of(), LocalDateTime.now());
         
-        when(pedidoService.cambiarEstado(eq(1L), any(CambioEstadoRequestDTO.class))).thenReturn(res);
+        when(pedidoService.cambiarEstado(eq(id), any(CambioEstadoRequestDTO.class))).thenReturn(res);
 
-        mockMvc.perform(patch("/api/v1/pedidos/1/estado")
+        mockMvc.perform(patch("/api/v1/pedidos/" + id + "/estado")
                 .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("chef").roles("CHEF"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
@@ -104,9 +109,10 @@ class PedidoControllerTest {
 
     @Test
     void eliminarPedido_exitoso() throws Exception {
-        mockMvc.perform(delete("/api/v1/pedidos/1")
+        UUID id = UUID.randomUUID();
+        mockMvc.perform(delete("/api/v1/pedidos/" + id)
                 .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isNoContent());
-        verify(pedidoService).eliminar(1L);
+        verify(pedidoService).eliminar(id);
     }
 }

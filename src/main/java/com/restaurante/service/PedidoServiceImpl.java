@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -65,7 +66,7 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
-    public PedidoResponseDTO obtenerPedidoPorId(Long id) {
+    public PedidoResponseDTO obtenerPedidoPorId(UUID id) {
         Pedido pedido = pedidoRepository.findById(id).map(pedidoEntityMapper::toDomain).orElseThrow(() -> new PedidoNotFoundException(id));
         return pedidoMapperOut.toResponse(pedido);
     }
@@ -82,7 +83,7 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     @Transactional
-    public PedidoResponseDTO cambiarEstado(Long id, CambioEstadoRequestDTO dto) {
+    public PedidoResponseDTO cambiarEstado(UUID id, CambioEstadoRequestDTO dto) {
         org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
         boolean isChef = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_CHEF"));
         boolean isMesero = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_MESERO"));
@@ -105,12 +106,12 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
-    public void eliminar(Long id) {
+    public void eliminar(UUID id) {
         if (!pedidoRepository.existsById(id)) throw new PedidoNotFoundException(id);
         pedidoRepository.deleteById(id);
     }
 
-    private void guardarEventoMongo(Long idPedido, String estadoAnterior, String estadoNuevo, String usuario) {
+    private void guardarEventoMongo(UUID idPedido, String estadoAnterior, String estadoNuevo, String usuario) {
         EventoPedidoDocument evento = EventoPedidoDocument.builder().idPedido(idPedido).estadoAnterior(estadoAnterior).estadoNuevo(estadoNuevo).usuarioQueCambio(usuario).timestamp(LocalDateTime.now(java.time.ZoneId.systemDefault())).build();
         eventoMongoRepository.save(evento);
     }
@@ -143,7 +144,7 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     @Transactional
-    public PedidoResponseDTO eliminarItemPedido(Long idPedido, Long idItem) {
+    public PedidoResponseDTO eliminarItemPedido(UUID idPedido, Long idItem) {
         Pedido pedido = pedidoRepository.findById(idPedido).map(pedidoEntityMapper::toDomain).orElseThrow(() -> new PedidoNotFoundException(idPedido));
         if (pedido.getEstado() != EstadoPedido.RECIBIDO) {
             throw new IllegalStateException("Solo se pueden eliminar ítems cuando el pedido está RECIBIDO.");

@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/pedidos")
@@ -32,7 +33,7 @@ public class PedidoController {
     @GetMapping("/{id}")
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MESERO', 'CHEF')")
     @Operation(summary = "Obtener pedido por ID")
-    public ResponseEntity<PedidoResponseDTO> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<PedidoResponseDTO> obtenerPorId(@PathVariable UUID id) {
         return ResponseEntity.ok(pedidoService.obtenerPedidoPorId(id));
     }
 
@@ -53,7 +54,7 @@ public class PedidoController {
     @PatchMapping("/{id}/estado")
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MESERO', 'CHEF')")
     @Operation(summary = "Avanzar estado del pedido", description = "transición secuencial estricta de estados. requiere idOperario.")
-    public ResponseEntity<PedidoResponseDTO> cambiarEstado(@PathVariable Long id,
+    public ResponseEntity<PedidoResponseDTO> cambiarEstado(@PathVariable UUID id,
                                                             @Valid @RequestBody CambioEstadoRequestDTO dto) {
         return ResponseEntity.ok(pedidoService.cambiarEstado(id, dto));
     }
@@ -62,7 +63,7 @@ public class PedidoController {
     @DeleteMapping("/{id}")
     @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> eliminarPedido(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarPedido(@PathVariable UUID id) {
         pedidoService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
@@ -70,7 +71,7 @@ public class PedidoController {
     @Operation(summary = "Eliminar ítem de pedido")
     @DeleteMapping("/{idPedido}/items/{idItem}")
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MESERO', 'CLIENTE')")
-    public ResponseEntity<PedidoResponseDTO> eliminarItemPedido(@PathVariable Long idPedido, @PathVariable Long idItem) {
+    public ResponseEntity<PedidoResponseDTO> eliminarItemPedido(@PathVariable UUID idPedido, @PathVariable Long idItem) {
         return ResponseEntity.ok(pedidoService.eliminarItemPedido(idPedido, idItem));
     }
 
