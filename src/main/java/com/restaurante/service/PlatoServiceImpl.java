@@ -50,7 +50,7 @@ public class PlatoServiceImpl implements PlatoService {
 
     @Override
     public List<PlatoResponseDTO> listarDisponibles() {
-        return platoRepository.findAll().stream().filter(com.restaurante.persistence.entity.PlatoEntity::isDisponible).map(entityMapper::toDomain).map(platoMapperOut::toResponse).toList();
+        return platoRepository.findByDisponibleTrue().stream().map(entityMapper::toDomain).map(platoMapperOut::toResponse).toList();
     }
 
     @Override

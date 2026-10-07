@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PlatoRepositoryJPA extends JpaRepository<PlatoEntity, Long> {
+    java.util.List<PlatoEntity> findByDisponibleTrue();
 }
