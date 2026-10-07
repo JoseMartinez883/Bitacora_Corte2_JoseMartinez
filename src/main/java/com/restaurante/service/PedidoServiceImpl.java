@@ -60,6 +60,7 @@ public class PedidoServiceImpl implements PedidoService {
         Pedido pedido = pedidoMapperIn.toDomain(dto, platos);
         Pedido guardado = pedidoEntityMapper.toDomain(pedidoRepository.save(pedidoEntityMapper.toEntity(pedido)));
         guardarEventoMongo(guardado.getId(), "N/A", guardado.getEstado().name(), "SISTEMA");
+        log.info("Pedido creado exitosamente con ID: {} para la mesa: {}", guardado.getId(), guardado.getIdMesa());
         return pedidoMapperOut.toResponse(guardado);
     }
 
@@ -99,6 +100,7 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.cambiarEstado(dto.estadoDestino());
         Pedido guardado = pedidoEntityMapper.toDomain(pedidoRepository.save(pedidoEntityMapper.toEntity(pedido)));
         guardarEventoMongo(guardado.getId(), estAnt, guardado.getEstado().name(), "Operario_" + dto.idOperario());
+        log.info("Estado del pedido {} cambiado de {} a {} por operario {}", id, estAnt, guardado.getEstado().name(), dto.idOperario());
         return pedidoMapperOut.toResponse(guardado);
     }
 
@@ -153,6 +155,7 @@ public class PedidoServiceImpl implements PedidoService {
             throw new IllegalArgumentException("Ítem no encontrado en el pedido.");
         }
         
+        log.info("Ítem {} eliminado correctamente del pedido {}", idItem, idPedido);
         // Re-mapeamos para retornar
         return pedidoMapperOut.toResponse(pedidoEntityMapper.toDomain(pedidoRepository.save(entity)));
     }
