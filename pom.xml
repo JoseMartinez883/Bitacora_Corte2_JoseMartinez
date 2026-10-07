@@ -35,7 +35,7 @@
 		<sonar.projectName>Bella Ciao API - Restaurante Italiano</sonar.projectName>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-		<sonar.exclusions>**/config/**</sonar.exclusions>
+		<sonar.exclusions>**/config/**, **/dto/**, **/mapper/*Impl.java</sonar.exclusions>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -178,6 +178,13 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.12</version>
+				<configuration>
+					<excludes>
+						<exclude>**/*DTO.class</exclude>
+						<exclude>**/*MapperImpl.class</exclude>
+						<exclude>**/config/*</exclude>
+					</excludes>
+				</configuration>
 				<executions>
 					<execution>
 						<id>prepare-agent</id>
