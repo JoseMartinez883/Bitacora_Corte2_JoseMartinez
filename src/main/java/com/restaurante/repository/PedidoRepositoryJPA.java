@@ -8,4 +8,6 @@ import java.util.List;
 @Repository
 public interface PedidoRepositoryJPA extends JpaRepository<PedidoEntity, Long> {
     List<PedidoEntity> findByIdMesa(Long idMesa);
+    List<PedidoEntity> findByEstado(com.restaurante.model.domain.EstadoPedido estado);
+    boolean existsByIdMesaAndEstadoNot(Long idMesa, com.restaurante.model.domain.EstadoPedido estado);
 }

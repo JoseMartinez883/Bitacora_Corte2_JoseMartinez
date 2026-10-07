@@ -20,6 +20,7 @@ import com.restaurante.validator.PlatoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public class PedidoServiceImpl implements PedidoService {
 
     private final PedidoRepositoryJPA pedidoRepository;
     private final PlatoRepositoryJPA platoRepository;
+    private final com.restaurante.repository.IngredienteRepositoryJPA ingredienteRepository;
     private final EventoPedidoRepositoryMongo eventoMongoRepository;
     private final PedidoEntityMapper pedidoEntityMapper;
     private final PlatoEntityMapper platoEntityMapper;
@@ -39,11 +41,20 @@ public class PedidoServiceImpl implements PedidoService {
     private final PlatoValidator platoValidator;
 
     @Override
+    @Transactional
     public PedidoResponseDTO crearPedido(PedidoRequestDTO dto) {
         List<Plato> platos = new ArrayList<>();
         for (var item : dto.items()) {
             Plato plato = platoRepository.findById(item.idPlato()).map(platoEntityMapper::toDomain).orElseThrow(() -> new PlatoNotFoundException(item.idPlato()));
             platoValidator.validarDisponibilidad(plato);
+            
+            // Descontar Inventario
+            descontarInventario(plato.getMasa());
+            descontarInventario(plato.getSalsa());
+            if (plato.getToppings() != null) plato.getToppings().forEach(this::descontarInventario);
+            if (plato.getProteinas() != null) plato.getProteinas().forEach(this::descontarInventario);
+            if (plato.getSalsasExtras() != null) plato.getSalsasExtras().forEach(this::descontarInventario);
+
             platos.add(plato);
         }
         Pedido pedido = pedidoMapperIn.toDomain(dto, platos);
@@ -65,10 +76,11 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public List<PedidoResponseDTO> listarPorEstado(EstadoPedido estado) {
-        return pedidoRepository.findAll().stream().filter(p -> p.getEstado() == estado).map(pedidoEntityMapper::toDomain).map(pedidoMapperOut::toResponse).toList();
+        return pedidoRepository.findByEstado(estado).stream().map(pedidoEntityMapper::toDomain).map(pedidoMapperOut::toResponse).toList();
     }
 
     @Override
+    @Transactional
     public PedidoResponseDTO cambiarEstado(Long id, CambioEstadoRequestDTO dto) {
         org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
         boolean isChef = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_CHEF"));
@@ -99,5 +111,31 @@ public class PedidoServiceImpl implements PedidoService {
     private void guardarEventoMongo(Long idPedido, String estadoAnterior, String estadoNuevo, String usuario) {
         EventoPedidoDocument evento = EventoPedidoDocument.builder().idPedido(idPedido).estadoAnterior(estadoAnterior).estadoNuevo(estadoNuevo).usuarioQueCambio(usuario).timestamp(LocalDateTime.now(java.time.ZoneId.systemDefault())).build();
         eventoMongoRepository.save(evento);
+    }
+
+    private void descontarInventario(String nombreIngrediente) {
+        if (nombreIngrediente == null || nombreIngrediente.isBlank()) return;
+        ingredienteRepository.findByNombre(nombreIngrediente).ifPresent(ing -> {
+            ing.restarStock(1);
+            ingredienteRepository.save(ing);
+            if (!ing.isDisponible()) {
+                desactivarPlatosAsociados(ing.getNombre());
+            }
+        });
+    }
+
+    private void desactivarPlatosAsociados(String ingrediente) {
+        // En una app real esto podria ser una query nativa compleja.
+        platoRepository.findAll().forEach(p -> {
+            boolean contiene = (p.getMasa() != null && p.getMasa().equalsIgnoreCase(ingrediente))
+                    || (p.getSalsa() != null && p.getSalsa().equalsIgnoreCase(ingrediente))
+                    || (p.getToppings() != null && p.getToppings().contains(ingrediente))
+                    || (p.getProteinas() != null && p.getProteinas().contains(ingrediente))
+                    || (p.getSalsasExtras() != null && p.getSalsasExtras().contains(ingrediente));
+            if (contiene) {
+                p.setDisponible(false);
+                platoRepository.save(p);
+            }
+        });
     }
 }
