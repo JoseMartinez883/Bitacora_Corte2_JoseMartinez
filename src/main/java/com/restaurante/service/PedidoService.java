@@ -13,4 +13,5 @@ public interface PedidoService {
     List<PedidoResponseDTO> listarPorEstado(EstadoPedido estado);
     PedidoResponseDTO cambiarEstado(Long id, CambioEstadoRequestDTO dto);
     void eliminar(Long id);
+    PedidoResponseDTO eliminarItemPedido(Long idPedido, Long idItem);
 }

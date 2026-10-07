@@ -138,4 +138,22 @@ public class PedidoServiceImpl implements PedidoService {
             }
         });
     }
+
+    @Override
+    @Transactional
+    public PedidoResponseDTO eliminarItemPedido(Long idPedido, Long idItem) {
+        Pedido pedido = pedidoRepository.findById(idPedido).map(pedidoEntityMapper::toDomain).orElseThrow(() -> new PedidoNotFoundException(idPedido));
+        if (pedido.getEstado() != EstadoPedido.RECIBIDO) {
+            throw new IllegalStateException("Solo se pueden eliminar ítems cuando el pedido está RECIBIDO.");
+        }
+        
+        com.restaurante.persistence.entity.PedidoEntity entity = pedidoRepository.findById(idPedido).get();
+        boolean removed = entity.getItems().removeIf(item -> item.getId().equals(idItem));
+        if (!removed) {
+            throw new IllegalArgumentException("Ítem no encontrado en el pedido.");
+        }
+        
+        // Re-mapeamos para retornar
+        return pedidoMapperOut.toResponse(pedidoEntityMapper.toDomain(pedidoRepository.save(entity)));
+    }
 }

@@ -23,7 +23,7 @@ public class PedidoController {
     private final PedidoService pedidoService;
 
     @PostMapping
-    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MESERO')")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MESERO', 'CLIENTE')")
     @Operation(summary = "Crear pedido", description = "crea el pedido y lo envía a cocina en estado RECIBIDO.")
     public ResponseEntity<PedidoResponseDTO> crearPedido(@Valid @RequestBody PedidoRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(pedidoService.crearPedido(dto));
@@ -65,6 +65,13 @@ public class PedidoController {
     public ResponseEntity<Void> eliminarPedido(@PathVariable Long id) {
         pedidoService.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    @Operation(summary = "Eliminar ítem de pedido")
+    @DeleteMapping("/{idPedido}/items/{idItem}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'MESERO', 'CLIENTE')")
+    public ResponseEntity<PedidoResponseDTO> eliminarItemPedido(@PathVariable Long idPedido, @PathVariable Long idItem) {
+        return ResponseEntity.ok(pedidoService.eliminarItemPedido(idPedido, idItem));
     }
 
 }
