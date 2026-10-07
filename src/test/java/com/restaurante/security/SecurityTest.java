@@ -29,6 +29,9 @@ class SecurityTest {
     @org.springframework.test.context.bean.override.mockito.MockitoBean
     private com.restaurante.repository.ResenaRepositoryMongo resenaRepositoryMongo;
 
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
+    private com.restaurante.security.CustomOAuth2SuccessHandler oAuth2SuccessHandler;
+
     @Autowired
     private MockMvc mockMvc;
 

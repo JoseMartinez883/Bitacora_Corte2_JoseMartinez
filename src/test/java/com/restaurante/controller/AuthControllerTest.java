@@ -45,6 +45,9 @@ class AuthControllerTest {
     @MockitoBean
     private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
+    @MockitoBean
+    private com.restaurante.security.CustomOAuth2SuccessHandler oAuth2SuccessHandler;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test

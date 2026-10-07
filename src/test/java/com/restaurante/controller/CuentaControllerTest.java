@@ -35,6 +35,9 @@ class CuentaControllerTest {
     @MockitoBean
     private com.restaurante.security.JwtUtil jwtUtil;
 
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
+    private com.restaurante.security.CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+
     @MockitoBean
     private com.restaurante.service.UsuarioDetailsService usuarioDetailsService;
 
