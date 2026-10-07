@@ -29,7 +29,7 @@ public class PlatoServiceImpl implements PlatoService {
     @Override
     public PlatoResponseDTO crearPlato(PlatoRequestDTO dto) {
         platoValidator.validarMasaYSalsa(dto.masa(), dto.salsa());
-        platoValidator.validarLimiteToppings(dto.toppings());
+        platoValidator.validarLimitesPorCategoria(dto.categoria(), dto.toppings(), dto.proteinas(), dto.salsasExtras());
         boolean existe = platoRepository.findAll().stream().anyMatch(p -> p.getNombre().equalsIgnoreCase(dto.nombre()));
         if (existe) throw new PlatoAlreadyExistException(dto.nombre());
         Plato plato = platoMapperIn.toDomain(dto);
@@ -57,8 +57,8 @@ public class PlatoServiceImpl implements PlatoService {
     public PlatoResponseDTO actualizarPlato(Long id, PlatoRequestDTO dto) {
         Plato plato = platoRepository.findById(id).map(entityMapper::toDomain).orElseThrow(() -> new PlatoNotFoundException(id));
         platoValidator.validarMasaYSalsa(dto.masa(), dto.salsa());
-        platoValidator.validarLimiteToppings(dto.toppings());
-        plato.setNombre(dto.nombre()); plato.setPrecio(dto.precio()); plato.setCategoria(dto.categoria()); plato.setMasa(dto.masa()); plato.setSalsa(dto.salsa()); plato.setToppings(dto.toppings()); plato.setDescripcion(dto.descripcion());
+        platoValidator.validarLimitesPorCategoria(dto.categoria(), dto.toppings(), dto.proteinas(), dto.salsasExtras());
+        plato.setNombre(dto.nombre()); plato.setPrecio(dto.precio()); plato.setCategoria(dto.categoria()); plato.setMasa(dto.masa()); plato.setSalsa(dto.salsa()); plato.setToppings(dto.toppings()); plato.setProteinas(dto.proteinas()); plato.setSalsasExtras(dto.salsasExtras()); plato.setDescripcion(dto.descripcion());
         return platoMapperOut.toResponse(entityMapper.toDomain(platoRepository.save(entityMapper.toEntity(plato))));
     }
 

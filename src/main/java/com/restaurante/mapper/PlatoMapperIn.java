@@ -10,6 +10,8 @@ public interface PlatoMapperIn {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "toppings", expression = "java(dto.toppings() != null ? dto.toppings() : new java.util.ArrayList<>())")
+    @Mapping(target = "proteinas", expression = "java(dto.proteinas() != null ? dto.proteinas() : new java.util.ArrayList<>())")
+    @Mapping(target = "salsasExtras", expression = "java(dto.salsasExtras() != null ? dto.salsasExtras() : new java.util.ArrayList<>())")
     @Mapping(target = "disponible", constant = "true")
     @Mapping(target = "activo", constant = "true")
     Plato toDomain(PlatoRequestDTO dto);

@@ -16,6 +16,8 @@ public class Plato {
     private String masa;
     private String salsa;
     private List<String> toppings = new ArrayList<>();
+    private List<String> proteinas = new ArrayList<>();
+    private List<String> salsasExtras = new ArrayList<>();
     private boolean activo;
 
     public boolean esValido() {

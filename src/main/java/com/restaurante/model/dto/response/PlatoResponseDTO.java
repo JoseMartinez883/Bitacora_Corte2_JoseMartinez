@@ -10,6 +10,8 @@ public record PlatoResponseDTO(
         String masa,
         String salsa,
         List<String> toppings,
+        List<String> proteinas,
+        List<String> salsasExtras,
         String descripcion,
         boolean disponible,
         boolean activo

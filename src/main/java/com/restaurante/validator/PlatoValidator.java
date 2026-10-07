@@ -20,9 +20,18 @@ public class PlatoValidator {
         }
     }
 
-    public void validarLimiteToppings(List<String> toppings) {
-        if (toppings != null && toppings.size() > MAX_TOPPINGS) {
-            throw new LimiteToppingsExcedidoException(toppings.size(), MAX_TOPPINGS);
+    public void validarLimitesPorCategoria(String categoria, List<String> toppings, List<String> proteinas, List<String> salsasExtras) {
+        if ("PIZZA".equalsIgnoreCase(categoria)) {
+            if (toppings != null && toppings.size() > MAX_TOPPINGS) {
+                throw new LimiteToppingsExcedidoException(toppings.size(), MAX_TOPPINGS);
+            }
+        } else if ("PASTA".equalsIgnoreCase(categoria)) {
+            if (proteinas != null && proteinas.size() > 2) {
+                throw new IllegalArgumentException("Límite excedido: Máximo 2 proteínas para pastas.");
+            }
+            if (salsasExtras != null && salsasExtras.size() > 3) {
+                throw new IllegalArgumentException("Límite excedido: Máximo 3 salsas para pastas.");
+            }
         }
     }
 

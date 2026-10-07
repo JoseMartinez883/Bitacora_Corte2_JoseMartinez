@@ -21,8 +21,14 @@ public record PlatoRequestDTO(
         @NotBlank(message = "La salsa primaria es obligatoria.")
         String salsa,
 
-        @Size(max = 5, message = "Máximo 5 toppings.")
+        @Size(max = 5, message = "Máximo 5 toppings para pizzas.")
         List<String> toppings,
+
+        @Size(max = 2, message = "Máximo 2 proteínas para pastas.")
+        List<String> proteinas,
+
+        @Size(max = 3, message = "Máximo 3 salsas para pastas.")
+        List<String> salsasExtras,
 
         String descripcion
 ) {}

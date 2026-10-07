@@ -23,5 +23,9 @@ public class PlatoEntity {
     private String salsa;
     @ElementCollection
     private List<String> toppings = new ArrayList<>();
+    @ElementCollection
+    private List<String> proteinas = new ArrayList<>();
+    @ElementCollection
+    private List<String> salsasExtras = new ArrayList<>();
     private boolean activo;
 }
