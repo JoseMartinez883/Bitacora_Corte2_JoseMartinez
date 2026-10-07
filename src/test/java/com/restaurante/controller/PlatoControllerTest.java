@@ -6,7 +6,7 @@ import com.restaurante.model.dto.response.PlatoResponseDTO;
 import com.restaurante.service.PlatoService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,8 +40,8 @@ class PlatoControllerTest {
 
     @Test
     void crearPlato_exitoso() throws Exception {
-        PlatoRequestDTO req = new PlatoRequestDTO("Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), "Rica pizza");
-        PlatoResponseDTO res = new PlatoResponseDTO(1L, "Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), "Rica pizza", true, true);
+        PlatoRequestDTO req = new PlatoRequestDTO("Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), List.of(), List.of(), "Rica pizza");
+        PlatoResponseDTO res = new PlatoResponseDTO(1L, "Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), List.of(), List.of(), "Rica pizza", true, true);
 
         when(platoService.crearPlato(any(PlatoRequestDTO.class))).thenReturn(res);
 
@@ -66,7 +66,7 @@ class PlatoControllerTest {
 
     @Test
     void obtenerPorId_exitoso() throws Exception {
-        PlatoResponseDTO res = new PlatoResponseDTO(1L, "Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), "Rica pizza", true, true);
+        PlatoResponseDTO res = new PlatoResponseDTO(1L, "Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), List.of(), List.of(), "Rica pizza", true, true);
         when(platoService.obtenerPlatoPorId(1L)).thenReturn(res);
 
         mockMvc.perform(get("/api/v1/platos/1")
@@ -77,8 +77,8 @@ class PlatoControllerTest {
 
     @Test
     void actualizarPlato_exitoso() throws Exception {
-        PlatoRequestDTO req = new PlatoRequestDTO("Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), "Rica pizza");
-        PlatoResponseDTO res = new PlatoResponseDTO(1L, "Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), "Rica pizza", true, true);
+        PlatoRequestDTO req = new PlatoRequestDTO("Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), List.of(), List.of(), "Rica pizza");
+        PlatoResponseDTO res = new PlatoResponseDTO(1L, "Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), List.of(), List.of(), "Rica pizza", true, true);
         
         when(platoService.actualizarPlato(eq(1L), any(PlatoRequestDTO.class))).thenReturn(res);
 
@@ -91,7 +91,7 @@ class PlatoControllerTest {
 
     @Test
     void desactivarPlato_exitoso() throws Exception {
-        PlatoResponseDTO res = new PlatoResponseDTO(1L, "Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), "Rica pizza", false, true);
+        PlatoResponseDTO res = new PlatoResponseDTO(1L, "Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), List.of(), List.of(), "Rica pizza", false, true);
         when(platoService.desactivarPlato(1L)).thenReturn(res);
 
         mockMvc.perform(patch("/api/v1/platos/1/desactivar")
@@ -101,7 +101,7 @@ class PlatoControllerTest {
 
     @Test
     void marcarAgotado_exitoso() throws Exception {
-        PlatoResponseDTO res = new PlatoResponseDTO(1L, "Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), "Rica pizza", true, false);
+        PlatoResponseDTO res = new PlatoResponseDTO(1L, "Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), List.of(), List.of(), "Rica pizza", true, false);
         when(platoService.marcarAgotado(1L)).thenReturn(res);
 
         mockMvc.perform(patch("/api/v1/platos/1/agotado")

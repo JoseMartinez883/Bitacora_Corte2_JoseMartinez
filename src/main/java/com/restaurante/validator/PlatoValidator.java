@@ -20,6 +20,12 @@ public class PlatoValidator {
         }
     }
 
+    public void validarLimiteToppings(List<String> toppings) {
+        if (toppings != null && toppings.size() > MAX_TOPPINGS) {
+            throw new LimiteToppingsExcedidoException(toppings.size(), MAX_TOPPINGS);
+        }
+    }
+
     public void validarLimitesPorCategoria(String categoria, List<String> toppings, List<String> proteinas, List<String> salsasExtras) {
         if ("PIZZA".equalsIgnoreCase(categoria)) {
             if (toppings != null && toppings.size() > MAX_TOPPINGS) {

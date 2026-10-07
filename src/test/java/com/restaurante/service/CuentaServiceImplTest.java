@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CuentaServiceImplTest {
     @Mock private CuentaRepositoryJPA cuentaRepository;
     @Mock private MesaRepositoryJPA mesaRepository;
+    @Mock private PedidoRepositoryJPA pedidoRepository;
     @Spy private CuentaEntityMapper cuentaEntityMapper = new CuentaEntityMapperImpl(new ItemPedidoEntityMapperImpl());
     @Spy private MesaEntityMapper mesaEntityMapper = new MesaEntityMapperImpl();
     @Spy private CuentaMapperOut cuentaMapperOut = new CuentaMapperOutImpl();
@@ -36,7 +37,7 @@ class CuentaServiceImplTest {
         cuentaEntity.setIdMesa(1L);
         cuentaEntity.setEstado(EstadoCuenta.ABIERTA);
         cuentaEntity.setItems(List.of());
-        when(cuentaRepository.findAll()).thenReturn(List.of(cuentaEntity));
+        when(cuentaRepository.findByIdMesaAndEstado(1L, EstadoCuenta.ABIERTA)).thenReturn(Optional.of(cuentaEntity));
         
         assertNotNull(cuentaService.obtenerCuentaActivaPorMesa(1L));
     }
@@ -52,7 +53,8 @@ class CuentaServiceImplTest {
         mesaEntity.setId(1L);
         mesaEntity.setEstado(com.restaurante.model.domain.EstadoMesa.OCUPADA);
         
-        when(cuentaRepository.findAll()).thenReturn(List.of(cuentaEntity));
+        when(cuentaRepository.findByIdMesaAndEstado(1L, EstadoCuenta.ABIERTA)).thenReturn(Optional.of(cuentaEntity));
+        when(pedidoRepository.existsByIdMesaAndEstadoNot(1L, com.restaurante.model.domain.EstadoPedido.ENTREGADO)).thenReturn(false);
         when(mesaRepository.findById(1L)).thenReturn(Optional.of(mesaEntity));
         when(cuentaRepository.save(any())).thenReturn(cuentaEntity);
         
@@ -61,7 +63,7 @@ class CuentaServiceImplTest {
 
     @Test
     void obtenerCuentaActivaPorMesa_lanzaExcepcionSiNoExiste() {
-        when(cuentaRepository.findAll()).thenReturn(List.of());
+        when(cuentaRepository.findByIdMesaAndEstado(99L, EstadoCuenta.ABIERTA)).thenReturn(Optional.empty());
         assertThrows(CuentaNotFoundException.class, () -> cuentaService.obtenerCuentaActivaPorMesa(99L));
     }
 
@@ -71,10 +73,24 @@ class CuentaServiceImplTest {
         cuentaEntity.setIdMesa(1L);
         cuentaEntity.setEstado(EstadoCuenta.ABIERTA);
         
-        when(cuentaRepository.findAll()).thenReturn(List.of(cuentaEntity));
+        when(cuentaRepository.findByIdMesaAndEstado(1L, EstadoCuenta.ABIERTA)).thenReturn(Optional.of(cuentaEntity));
+        when(pedidoRepository.existsByIdMesaAndEstadoNot(1L, com.restaurante.model.domain.EstadoPedido.ENTREGADO)).thenReturn(false);
         when(mesaRepository.findById(1L)).thenReturn(Optional.empty());
         
         PagoCuentaRequestDTO req = new PagoCuentaRequestDTO("EFECTIVO", 50000.0);
         assertThrows(MesaNotFoundException.class, () -> cuentaService.registrarPago(1L, req));
+    }
+
+    @Test
+    void registrarPago_lanzaExcepcionSiHayPedidosPendientes() {
+        CuentaEntity cuentaEntity = new CuentaEntity();
+        cuentaEntity.setIdMesa(1L);
+        cuentaEntity.setEstado(EstadoCuenta.ABIERTA);
+
+        when(cuentaRepository.findByIdMesaAndEstado(1L, EstadoCuenta.ABIERTA)).thenReturn(Optional.of(cuentaEntity));
+        when(pedidoRepository.existsByIdMesaAndEstadoNot(1L, com.restaurante.model.domain.EstadoPedido.ENTREGADO)).thenReturn(true);
+
+        PagoCuentaRequestDTO req = new PagoCuentaRequestDTO("EFECTIVO", 50000.0);
+        assertThrows(IllegalStateException.class, () -> cuentaService.registrarPago(1L, req));
     }
 }

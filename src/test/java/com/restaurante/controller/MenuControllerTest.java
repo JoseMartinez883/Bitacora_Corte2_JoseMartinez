@@ -4,7 +4,7 @@ import com.restaurante.model.dto.response.PlatoResponseDTO;
 import com.restaurante.service.PlatoService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
@@ -31,7 +31,7 @@ class MenuControllerTest {
 
     @Test
     void obtenerMenu_exitoso() throws Exception {
-        PlatoResponseDTO p1 = new PlatoResponseDTO(1L, "Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), "Rica", true, true);
+        PlatoResponseDTO p1 = new PlatoResponseDTO(1L, "Pizza", 10.0, "Principal", "Masa fina", "Salsa roja", List.of(), List.of(), List.of(), "Rica", true, true);
         when(platoService.listarDisponibles()).thenReturn(List.of(p1));
 
         mockMvc.perform(get("/api/v1/menu")

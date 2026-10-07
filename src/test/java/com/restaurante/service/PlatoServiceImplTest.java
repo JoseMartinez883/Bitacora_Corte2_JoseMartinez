@@ -47,7 +47,7 @@ class PlatoServiceImplTest {
     void crearPlato_exitoso() {
         when(platoRepository.findAll()).thenReturn(List.of());
         when(platoRepository.save(any())).thenReturn(platoEntity);
-        assertNotNull(platoService.crearPlato(new PlatoRequestDTO("Pizza", 1.0, "", "", "", List.of(), "")));
+        assertNotNull(platoService.crearPlato(new PlatoRequestDTO("Pizza", 1.0, "", "", "", List.of(), List.of(), List.of(), "")));
     }
 
     @Test
@@ -58,7 +58,7 @@ class PlatoServiceImplTest {
 
     @Test
     void listarDisponibles() {
-        when(platoRepository.findAll()).thenReturn(List.of(platoEntity));
+        when(platoRepository.findByDisponibleTrue()).thenReturn(List.of(platoEntity));
         assertFalse(platoService.listarDisponibles().isEmpty());
     }
 
@@ -72,7 +72,7 @@ class PlatoServiceImplTest {
     void actualizarPlato_exitoso() {
         when(platoRepository.findById(1L)).thenReturn(Optional.of(platoEntity));
         when(platoRepository.save(any())).thenAnswer(i -> i.getArgument(0));
-        assertNotNull(platoService.actualizarPlato(1L, new PlatoRequestDTO("Pizza 2", 2.0, "", "", "", List.of(), "")));
+        assertNotNull(platoService.actualizarPlato(1L, new PlatoRequestDTO("Pizza 2", 2.0, "", "", "", List.of(), List.of(), List.of(), "")));
     }
 
     @Test
@@ -94,7 +94,7 @@ class PlatoServiceImplTest {
     @Test
     void crearPlato_lanzaExcepcionSiYaExiste() {
         when(platoRepository.findAll()).thenReturn(List.of(platoEntity));
-        PlatoRequestDTO dto = new PlatoRequestDTO("Pizza", 1.0, "", "", "", List.of(), "");
+        PlatoRequestDTO dto = new PlatoRequestDTO("Pizza", 1.0, "", "", "", List.of(), List.of(), List.of(), "");
         assertThrows(PlatoAlreadyExistException.class, () -> platoService.crearPlato(dto));
         verify(platoRepository, never()).save(any());
     }
@@ -108,7 +108,7 @@ class PlatoServiceImplTest {
     @Test
     void actualizarPlato_lanzaExcepcionSiNoExiste() {
         when(platoRepository.findById(99L)).thenReturn(Optional.empty());
-        PlatoRequestDTO dto = new PlatoRequestDTO("Pizza", 1.0, "", "", "", List.of(), "");
+        PlatoRequestDTO dto = new PlatoRequestDTO("Pizza", 1.0, "", "", "", List.of(), List.of(), List.of(), "");
         assertThrows(PlatoNotFoundException.class, () -> platoService.actualizarPlato(99L, dto));
     }
 
