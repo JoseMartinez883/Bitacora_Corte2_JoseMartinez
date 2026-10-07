@@ -41,6 +41,12 @@ build/
 *.tar.gz
 *.rar
 
+# Configuracion local
+.env
+.env.*
+# Certificados / keystores SSL (nunca versionar)
+*.p12
+*.jks
 # Registros y logs
 *.log
 

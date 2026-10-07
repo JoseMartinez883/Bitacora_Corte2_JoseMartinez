@@ -21,5 +21,10 @@ hs_err_pid*
 .env
 .env.*
 !.env.example
+.git
+.gitignore
+.mvn
+*.md
+*.p12
 node_modules/
 dist/
