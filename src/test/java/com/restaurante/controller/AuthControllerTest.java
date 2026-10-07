@@ -39,6 +39,12 @@ class AuthControllerTest {
     @MockitoBean
     private com.restaurante.service.UsuarioDetailsService usuarioDetailsService;
 
+    @MockitoBean
+    private com.restaurante.repository.UsuarioRepositoryJPA usuarioRepository;
+
+    @MockitoBean
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test

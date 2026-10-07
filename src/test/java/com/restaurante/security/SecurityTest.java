@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -71,5 +72,34 @@ class SecurityTest {
     void abrirCuentaMesa_conRolCliente_devuelve403() throws Exception {
         mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch("/api/v1/mesas/1/abrir-cuenta"))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void endpointProtegido_conTokenInvalido_devuelve401() throws Exception {
+        mockMvc.perform(get("/api/v1/platos")
+                .header("Authorization", "Bearer tokenbasura"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void login_conCredencialesIncorrectas_devuelve401() throws Exception {
+        mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"nadie@bellaciao.com\",\"password\":\"incorrecta\"}"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void respuestas_incluyenCabecerasDeSeguridad() throws Exception {
+        mockMvc.perform(get("/api/v1/menu"))
+                .andExpect(header().string("X-Frame-Options", "DENY"))
+                .andExpect(header().string("X-Content-Type-Options", "nosniff"))
+                .andExpect(header().exists("Content-Security-Policy"));
+    }
+
+    @Test
+    void menu_esPublico_sinToken() throws Exception {
+        mockMvc.perform(get("/api/v1/menu"))
+                .andExpect(status().isOk());
     }
 }

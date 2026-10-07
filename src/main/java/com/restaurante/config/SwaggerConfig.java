@@ -15,7 +15,10 @@ import org.springframework.context.annotation.Configuration;
                 description = "API REST para gestión operativa de restaurante.",
                 contact = @Contact(name = "Equipo DOSW", email = "jose.martinez@mail.escuelaing.edu.co")
         ),
-        security = @SecurityRequirement(name = "BearerAuth")
+        security = {
+                @SecurityRequirement(name = "BearerAuth"),
+                @SecurityRequirement(name = "BasicAuth")
+        }
 )
 @SecurityScheme(
         name = "BearerAuth",
@@ -23,5 +26,9 @@ import org.springframework.context.annotation.Configuration;
         scheme = "bearer",
         bearerFormat = "JWT"
 )
+@SecurityScheme(
+        name = "BasicAuth",
+        type = SecuritySchemeType.HTTP,
+        scheme = "basic"
+)
 public class SwaggerConfig { }
-

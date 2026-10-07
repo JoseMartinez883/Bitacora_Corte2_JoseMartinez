@@ -25,6 +25,13 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request.getRequestURI(), null);
     }
 
+    // ---- 401 Unauthorized (credenciales invalidas en login) ----
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleAuthentication(org.springframework.security.core.AuthenticationException ex, HttpServletRequest request) {
+        log.warn("Intento de login fallido [401] en {} desde {}", request.getRequestURI(), request.getRemoteAddr());
+        return buildResponse(HttpStatus.UNAUTHORIZED, "Credenciales invalidas", request.getRequestURI(), null);
+    }
+
     // ---- 403 Forbidden ----
     @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
     public ResponseEntity<ErrorResponseDTO> handleAccessDenied(org.springframework.security.access.AccessDeniedException ex, HttpServletRequest request) {
