@@ -1,9 +1,10 @@
 package com.restaurante.model.dto.response;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record ReservaResponseDTO(
-        Long id,
+        UUID id,
         Long idMesa,
         String cliente,
         LocalDateTime fechaHora,

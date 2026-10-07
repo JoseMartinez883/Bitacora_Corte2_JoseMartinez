@@ -2,11 +2,12 @@ package com.restaurante.model.domain;
 
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 public class Reserva {
 
-    private Long id;
+    private UUID id;
     private Long idMesa;
     private Long usuarioId;
     private String cliente;

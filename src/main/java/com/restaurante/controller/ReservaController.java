@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/reservas")
@@ -35,19 +36,19 @@ public class ReservaController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener reserva por ID")
-    public ResponseEntity<ReservaResponseDTO> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<ReservaResponseDTO> obtenerPorId(@PathVariable UUID id) {
         return ResponseEntity.ok(reservaService.obtenerReservaPorId(id));
     }
 
     @DeleteMapping("/{id}/cancelar")
     @Operation(summary = "Cancelar reserva")
-    public ResponseEntity<ReservaResponseDTO> cancelarReserva(@PathVariable Long id) {
+    public ResponseEntity<ReservaResponseDTO> cancelarReserva(@PathVariable UUID id) {
         return ResponseEntity.ok(reservaService.cancelarReserva(id));
     }
 
     @Operation(summary = "Actualizar reserva")
     @PutMapping("/{id}")
-    public ResponseEntity<ReservaResponseDTO> actualizarReserva(@PathVariable Long id, @RequestBody ReservaRequestDTO dto) {
+    public ResponseEntity<ReservaResponseDTO> actualizarReserva(@PathVariable UUID id, @RequestBody ReservaRequestDTO dto) {
         return ResponseEntity.ok(reservaService.actualizar(id, dto));
     }
 }

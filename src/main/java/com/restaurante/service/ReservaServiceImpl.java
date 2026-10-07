@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -30,7 +31,7 @@ public class ReservaServiceImpl implements ReservaService {
     }
 
     @Override
-    public ReservaResponseDTO obtenerReservaPorId(Long id) {
+    public ReservaResponseDTO obtenerReservaPorId(UUID id) {
         Reserva reserva = reservaRepository.findById(id).map(entityMapper::toDomain).orElseThrow(() -> new ReservaNotFoundException(id));
         validarPropiedadSiEsCliente(reserva);
         return reservaMapperOut.toResponse(reserva);
@@ -42,7 +43,7 @@ public class ReservaServiceImpl implements ReservaService {
     }
 
     @Override
-    public ReservaResponseDTO cancelarReserva(Long id) {
+    public ReservaResponseDTO cancelarReserva(UUID id) {
         Reserva reserva = reservaRepository.findById(id).map(entityMapper::toDomain).orElseThrow(() -> new ReservaNotFoundException(id));
         validarPropiedadSiEsCliente(reserva);
         reserva.cancelar();
@@ -50,7 +51,7 @@ public class ReservaServiceImpl implements ReservaService {
     }
 
     @Override
-    public ReservaResponseDTO actualizar(Long id, ReservaRequestDTO dto) {
+    public ReservaResponseDTO actualizar(UUID id, ReservaRequestDTO dto) {
         if (!reservaRepository.existsById(id)) throw new ReservaNotFoundException(id);
         Reserva reservaAnterior = reservaRepository.findById(id).map(entityMapper::toDomain).orElseThrow();
         validarPropiedadSiEsCliente(reservaAnterior);
