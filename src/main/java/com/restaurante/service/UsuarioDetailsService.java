@@ -20,10 +20,15 @@ public class UsuarioDetailsService implements UserDetailsService {
         UsuarioEntity usuario = repository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + email));
         
+        String rol = usuario.getRol();
+        if (rol != null && rol.startsWith("ROLE_")) {
+            rol = rol.substring(5);
+        }
+
         return User.builder()
                 .username(usuario.getEmail())
                 .password(usuario.getPassword())     // ya viene hasheado de la BD
-                .roles(usuario.getRol())             // Ej: "ADMIN", "CHEF", "MESERO", "CLIENTE"
+                .roles(rol != null ? rol : "CLIENTE") // Ej: "ADMIN", "CHEF", "MESERO", "CLIENTE"
                 .build();
     }
 }

@@ -39,7 +39,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             UsuarioEntity newUser = UsuarioEntity.builder()
                     .email(email)
                     .password(passwordEncoder.encode(UUID.randomUUID().toString())) // Contraseña aleatoria segura
-                    .rol("ROLE_CLIENTE") // Por defecto Cliente
+                    .rol("CLIENTE") // Por defecto Cliente, sin el prefijo para mantener consistencia con DataInitializer
                     .build();
             return usuarioRepository.save(newUser);
         });

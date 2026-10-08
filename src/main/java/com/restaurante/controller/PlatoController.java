@@ -21,7 +21,7 @@ public class PlatoController {
     private final PlatoService platoService;
 
     @PostMapping
-    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'CHEF')")
     @Operation(summary = "Crear un plato", description = "Crea un nuevo plato. masa y salsa obligatorias. máx 5 toppings.")
     public ResponseEntity<PlatoResponseDTO> crearPlato(@Valid @RequestBody PlatoRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(platoService.crearPlato(dto));

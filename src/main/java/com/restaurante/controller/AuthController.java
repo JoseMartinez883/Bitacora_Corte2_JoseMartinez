@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping({"/api/auth", "/api/v1/auth"})
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -26,27 +26,33 @@ public class AuthController {
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO request) {
+        try {
+            // 1. Validar credenciales con Spring Security
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+            );
 
-        // 1. Validar credenciales con Spring Security
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
+            // 2. Extraer el usuario validado
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        // 2. Extraer el usuario validado
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            // 3. Obtener el rol para inyectarlo en el JWT
+            String rol = userDetails.getAuthorities().stream()
+                    .findFirst()
+                    .map(auth -> auth.getAuthority())
+                    .orElse("ROLE_CLIENTE");
 
-        // 3. Obtener el rol para inyectarlo en el JWT
-        String rol = userDetails.getAuthorities().stream()
-                .findFirst()
-                .map(auth -> auth.getAuthority())
-                .orElse("UNKNOWN");
+            // 4. Generar el JWT
+            String token = jwtUtil.generateToken(userDetails.getUsername(), rol);
 
-        // 4. Generar el JWT
-        String token = jwtUtil.generateToken(userDetails.getUsername(), rol);
-
-        // 5. Retornar el DTO con el token
-        return ResponseEntity.ok(new TokenResponseDTO(token));
+            // 5. Retornar el DTO con el token
+            return ResponseEntity.ok(new TokenResponseDTO(token));
+        } catch (org.springframework.security.core.AuthenticationException ex) {
+            return ResponseEntity.status(401).body(java.util.Map.of(
+                    "error", "Unauthorized",
+                    "message", "Credenciales invalidas"
+            ));
+        }
     }
 
     @PostMapping("/register")
