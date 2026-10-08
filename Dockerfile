@@ -19,9 +19,9 @@ COPY --from=builder /app/target/*.jar app.jar
 
 # Variables de entorno con valores por defecto (se sobreescriben en Compose)
 ENV SPRING_PROFILES_ACTIVE=docker
-ENV SERVER_PORT=8081
+ENV SERVER_PORT=8080
 
-EXPOSE 8081
+EXPOSE 8080
 
 # Arrancar la aplicación
 ENTRYPOINT ["java", "-jar", "app.jar"]
