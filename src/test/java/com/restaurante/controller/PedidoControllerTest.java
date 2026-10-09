@@ -14,7 +14,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -117,5 +116,16 @@ class PedidoControllerTest {
                 .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isNoContent());
         verify(pedidoService).eliminar(id);
+    }
+
+    @Test
+    void eliminarItemPedido_exitoso() throws Exception {
+        UUID id = UUID.randomUUID();
+        PedidoResponseDTO res = new PedidoResponseDTO(id, 1L, com.restaurante.model.domain.EstadoPedido.RECIBIDO, List.of(), LocalDateTime.now());
+        when(pedidoService.eliminarItemPedido(id, 1L)).thenReturn(res);
+
+        mockMvc.perform(delete("/api/v1/pedidos/" + id + "/items/1")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("mesero").roles("MESERO")))
+                .andExpect(status().isOk());
     }
 }

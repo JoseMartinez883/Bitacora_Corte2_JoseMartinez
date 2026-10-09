@@ -77,4 +77,40 @@ class GlobalExceptionHandlerTest {
         List<String> messages = response.getBody().details();
         assertEquals("field1: Error message 1", messages.get(0));
     }
+
+    @Test
+    void handleAuthentication_exitoso() {
+        org.springframework.security.core.AuthenticationException ex = new org.springframework.security.authentication.BadCredentialsException("Bad");
+        ResponseEntity<ErrorResponseDTO> response = handler.handleAuthentication(ex, request);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertEquals("Credenciales invalidas", response.getBody().message());
+    }
+
+    @Test
+    void handleAccessDenied_exitoso() {
+        org.springframework.security.access.AccessDeniedException ex = new org.springframework.security.access.AccessDeniedException("No admin");
+        ResponseEntity<ErrorResponseDTO> response = handler.handleAccessDenied(ex, request);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+        assertEquals("Acceso denegado: No tienes el rol necesario para esta accion.", response.getBody().message());
+    }
+
+    @Test
+    void handleNotReadable_exitoso() {
+        org.springframework.http.converter.HttpMessageNotReadableException ex = mock(org.springframework.http.converter.HttpMessageNotReadableException.class);
+        ResponseEntity<ErrorResponseDTO> response = handler.handleNotReadable(ex, request);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("El cuerpo de la petición tiene un formato inválido (por ejemplo, idPedido debe ser un UUID válido).", response.getBody().message());
+    }
+
+    @Test
+    void handleGeneric_exitoso() {
+        Exception ex = new Exception("Error fatal");
+        ResponseEntity<ErrorResponseDTO> response = handler.handleGeneric(ex, request);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Ocurrió un error interno en el servidor", response.getBody().message());
+    }
 }

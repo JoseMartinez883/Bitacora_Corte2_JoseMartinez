@@ -71,4 +71,23 @@ class VehiculoControllerTest {
                 .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void registrarSalidaPorPlaca_exitoso() throws Exception {
+        RegistroVehiculoResponseDTO res = new RegistroVehiculoResponseDTO(1L, "XYZ-123", LocalDateTime.now(), LocalDateTime.now().plusHours(1), "INACTIVO", 5000.0);
+        when(vehiculoService.registrarSalidaPorPlaca("XYZ-123")).thenReturn(res);
+
+        mockMvc.perform(post("/api/v1/vehiculos/salida/XYZ-123")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void listarTodos_exitoso() throws Exception {
+        when(vehiculoService.listarTodos()).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v1/vehiculos")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("admin").roles("ADMIN")))
+                .andExpect(status().isOk());
+    }
 }

@@ -99,4 +99,79 @@ class AuthControllerTest {
         verifyNoInteractions(authenticationManager);
         verifyNoInteractions(jwtUtil);
     }
+
+    @Test
+    void testLogin_RutaCanonica_Success() throws Exception {
+        LoginRequestDTO loginRequest = new LoginRequestDTO();
+        loginRequest.setEmail("admin@bellaciao.com");
+        loginRequest.setPassword("123456");
+
+        UserDetails mockUserDetails = new User(
+                "admin@bellaciao.com", 
+                "123456", 
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
+        );
+        Authentication auth = new UsernamePasswordAuthenticationToken(
+                mockUserDetails, 
+                null, 
+                mockUserDetails.getAuthorities()
+        );
+
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(auth);
+        when(jwtUtil.generateToken("admin@bellaciao.com", "ROLE_ADMIN")).thenReturn("canonical-jwt-token");
+
+        mockMvc.perform(post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value("canonical-jwt-token"));
+    }
+
+    @Test
+    void testLogin_FallaCredenciales() throws Exception {
+        LoginRequestDTO loginRequest = new LoginRequestDTO();
+        loginRequest.setEmail("admin@bellaciao.com");
+        loginRequest.setPassword("wrong");
+
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenThrow(new org.springframework.security.authentication.BadCredentialsException("Bad credentials"));
+
+        mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void testRegister_Success() throws Exception {
+        com.restaurante.model.dto.RegisterRequestDTO req = new com.restaurante.model.dto.RegisterRequestDTO();
+        req.setEmail("new@test.com");
+        req.setPassword("password123");
+        req.setRol("ROLE_CLIENTE");
+
+        when(usuarioRepository.findByEmail("new@test.com")).thenReturn(java.util.Optional.empty());
+        when(passwordEncoder.encode("password123")).thenReturn("encoded");
+
+        mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Usuario registrado exitosamente"));
+    }
+
+    @Test
+    void testRegister_FallaEmailDuplicado() throws Exception {
+        com.restaurante.model.dto.RegisterRequestDTO req = new com.restaurante.model.dto.RegisterRequestDTO();
+        req.setEmail("exist@test.com");
+        req.setPassword("password123");
+        req.setRol("ROLE_CLIENTE");
+
+        when(usuarioRepository.findByEmail("exist@test.com")).thenReturn(java.util.Optional.of(new com.restaurante.persistence.entity.UsuarioEntity()));
+
+        mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("El email ya está registrado"));
+    }
 }
