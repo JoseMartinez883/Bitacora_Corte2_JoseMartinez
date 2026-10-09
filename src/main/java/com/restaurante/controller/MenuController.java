@@ -3,6 +3,7 @@ package com.restaurante.controller;
 import com.restaurante.model.dto.response.PlatoResponseDTO;
 import com.restaurante.service.PlatoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class MenuController {
 
     @GetMapping
     @Operation(summary = "Ver el menú del restaurante", description = "RF1: retorna únicamente los platos disponibles y activos.")
+    @ApiResponse(responseCode = "200", description = "Menú disponible obtenido exitosamente")
     public ResponseEntity<List<PlatoResponseDTO>> verMenu() {
         return ResponseEntity.ok(platoService.listarDisponibles());
     }

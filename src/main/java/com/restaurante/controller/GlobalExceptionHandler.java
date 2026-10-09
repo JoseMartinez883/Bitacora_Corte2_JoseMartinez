@@ -19,7 +19,8 @@ public class GlobalExceptionHandler {
     // ---- 404 Not Found ----
     @ExceptionHandler({PlatoNotFoundException.class, PedidoNotFoundException.class,
                         MesaNotFoundException.class, CuentaNotFoundException.class,
-                        ReservaNotFoundException.class, VehiculoNotFoundException.class})
+                        ReservaNotFoundException.class, VehiculoNotFoundException.class,
+                        ResenaNotFoundException.class, CatalogoNotFoundException.class})
     public ResponseEntity<ErrorResponseDTO> handleNotFound(RuntimeException ex, HttpServletRequest request) {
         log.warn("Recurso no encontrado [404] en {}: {}", request.getRequestURI(), ex.getMessage());
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request.getRequestURI(), null);
@@ -41,7 +42,8 @@ public class GlobalExceptionHandler {
 
     // ---- 409 Conflict ----
     @ExceptionHandler({PlatoAlreadyExistException.class, MesaNoDisponibleException.class,
-                        TransicionEstadoInvalidaException.class})
+                        TransicionEstadoInvalidaException.class, ResenaDuplicadaException.class,
+                        VehiculoYaEstacionadoException.class, MesaYaReservadaException.class})
     public ResponseEntity<ErrorResponseDTO> handleConflict(RuntimeException ex, HttpServletRequest request) {
         log.warn("Conflicto [409] en {}: {}", request.getRequestURI(), ex.getMessage());
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage(), request.getRequestURI(), null);
@@ -49,13 +51,15 @@ public class GlobalExceptionHandler {
 
     // ---- 422 Unprocessable Entity (Reglas de negocio) ----
     @ExceptionHandler({LimiteToppingsExcedidoException.class, PlatoNoDisponibleException.class,
-                        IllegalArgumentException.class, IllegalStateException.class})
+                        IllegalArgumentException.class, IllegalStateException.class,
+                        PedidoNoEntregadoException.class, ParqueaderoLlenoException.class,
+                        PedidoEnCocinaException.class})
     public ResponseEntity<ErrorResponseDTO> handleBusinessRule(RuntimeException ex, HttpServletRequest request) {
         log.warn("Regla de negocio violada [422] en {}: {}", request.getRequestURI(), ex.getMessage());
         return buildResponse(HttpStatus.valueOf(422), ex.getMessage(), request.getRequestURI(), null);
     }
 
-    // ---- 400 Bad Request (@Valid) ----
+    // ---- 400 Bad Request (@Valid & formato JSON/UUID inválido) ----
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDTO> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
         List<String> errors = ex.getBindingResult().getFieldErrors().stream()
@@ -63,6 +67,12 @@ public class GlobalExceptionHandler {
                 .toList();
         log.warn("Fallo de validación [400] en {}: {}", request.getRequestURI(), errors);
         return buildResponse(HttpStatus.BAD_REQUEST, "Validation Failed", request.getRequestURI(), errors);
+    }
+
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponseDTO> handleNotReadable(org.springframework.http.converter.HttpMessageNotReadableException ex, HttpServletRequest request) {
+        log.warn("Error en el formato del request body [400] en {}: {}", request.getRequestURI(), ex.getMessage());
+        return buildResponse(HttpStatus.BAD_REQUEST, "El cuerpo de la petición tiene un formato inválido (por ejemplo, idPedido debe ser un UUID válido).", request.getRequestURI(), null);
     }
 
     // ---- 500 Internal Server Error (Errores no controlados) ----

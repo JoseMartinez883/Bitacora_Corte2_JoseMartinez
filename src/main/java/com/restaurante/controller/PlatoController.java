@@ -4,6 +4,7 @@ import com.restaurante.model.dto.request.PlatoRequestDTO;
 import com.restaurante.model.dto.response.PlatoResponseDTO;
 import com.restaurante.service.PlatoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,10 @@ public class PlatoController {
     @PostMapping
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'CHEF')")
     @Operation(summary = "Crear un plato", description = "Crea un nuevo plato. masa y salsa obligatorias. máx 5 toppings.")
+    @ApiResponse(responseCode = "201", description = "Plato creado exitosamente")
+    @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos")
+    @ApiResponse(responseCode = "409", description = "Ya existe un plato con ese nombre")
+    @ApiResponse(responseCode = "422", description = "Regla de negocio violada (límites de toppings, masa o salsa)")
     public ResponseEntity<PlatoResponseDTO> crearPlato(@Valid @RequestBody PlatoRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(platoService.crearPlato(dto));
     }
@@ -30,6 +35,7 @@ public class PlatoController {
     @GetMapping
     @org.springframework.security.access.prepost.PreAuthorize("isAuthenticated()")
     @Operation(summary = "Listar todos los platos", description = "Retorna todos los platos incluyendo inactivos (vista admin).")
+    @ApiResponse(responseCode = "200", description = "Listado completo de platos obtenido exitosamente")
     public ResponseEntity<List<PlatoResponseDTO>> listarTodos() {
         return ResponseEntity.ok(platoService.listarTodos());
     }
@@ -37,6 +43,8 @@ public class PlatoController {
     @GetMapping("/{id}")
     @org.springframework.security.access.prepost.PreAuthorize("isAuthenticated()")
     @Operation(summary = "Obtener plato por ID")
+    @ApiResponse(responseCode = "200", description = "Plato encontrado")
+    @ApiResponse(responseCode = "404", description = "Plato no encontrado")
     public ResponseEntity<PlatoResponseDTO> obtenerPorId(@PathVariable Long id) {
         return ResponseEntity.ok(platoService.obtenerPlatoPorId(id));
     }
@@ -44,6 +52,9 @@ public class PlatoController {
     @PutMapping("/{id}")
     @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Actualizar un plato")
+    @ApiResponse(responseCode = "200", description = "Plato actualizado exitosamente")
+    @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos")
+    @ApiResponse(responseCode = "404", description = "Plato no encontrado")
     public ResponseEntity<PlatoResponseDTO> actualizarPlato(@PathVariable Long id,
                                                              @Valid @RequestBody PlatoRequestDTO dto) {
         return ResponseEntity.ok(platoService.actualizarPlato(id, dto));
@@ -52,6 +63,8 @@ public class PlatoController {
     @PatchMapping("/{id}/desactivar")
     @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Desactivar un plato", description = "desactiva sin borrar historial.")
+    @ApiResponse(responseCode = "200", description = "Plato desactivado exitosamente")
+    @ApiResponse(responseCode = "404", description = "Plato no encontrado")
     public ResponseEntity<PlatoResponseDTO> desactivarPlato(@PathVariable Long id) {
         return ResponseEntity.ok(platoService.desactivarPlato(id));
     }
@@ -59,11 +72,15 @@ public class PlatoController {
     @PatchMapping("/{id}/agotado")
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'CHEF')")
     @Operation(summary = "Marcar plato como agotado", description = "marca como no disponible por falta de ingredientes.")
+    @ApiResponse(responseCode = "200", description = "Plato marcado como agotado exitosamente")
+    @ApiResponse(responseCode = "404", description = "Plato no encontrado")
     public ResponseEntity<PlatoResponseDTO> marcarAgotado(@PathVariable Long id) {
         return ResponseEntity.ok(platoService.marcarAgotado(id));
     }
 
     @Operation(summary = "Eliminar plato")
+    @ApiResponse(responseCode = "204", description = "Plato eliminado exitosamente")
+    @ApiResponse(responseCode = "404", description = "Plato no encontrado")
     @DeleteMapping("/{id}")
     @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)

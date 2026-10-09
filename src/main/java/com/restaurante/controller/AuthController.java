@@ -3,6 +3,9 @@ package com.restaurante.controller;
 import com.restaurante.model.dto.LoginRequestDTO;
 import com.restaurante.model.dto.TokenResponseDTO;
 import com.restaurante.security.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping({"/api/auth", "/api/v1/auth"})
+@RequestMapping({"/auth", "/api/auth", "/api/v1/auth"})
 @RequiredArgsConstructor
+@Tag(name = "Autenticación", description = "Endpoints para inicio de sesión y registro de usuarios con JWT")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -26,7 +30,11 @@ public class AuthController {
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO request) {
+    @Operation(summary = "Iniciar sesión", description = "Autentica credenciales y genera un token JWT para autorizar peticiones.")
+    @ApiResponse(responseCode = "200", description = "Autenticación exitosa, token JWT retornado")
+    @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos")
+    @ApiResponse(responseCode = "401", description = "Credenciales inválidas")
+    public ResponseEntity<Object> login(@Valid @RequestBody LoginRequestDTO request) {
         try {
             // 1. Validar credenciales con Spring Security
             Authentication authentication = authenticationManager.authenticate(
@@ -56,6 +64,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @Operation(summary = "Registrar nuevo usuario", description = "Crea un usuario con contraseña cifrada mediante BCrypt.")
+    @ApiResponse(responseCode = "200", description = "Usuario registrado exitosamente")
+    @ApiResponse(responseCode = "400", description = "El correo ya está registrado o datos inválidos")
     public ResponseEntity<String> register(@Valid @RequestBody com.restaurante.model.dto.RegisterRequestDTO request) {
         if (usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
             return ResponseEntity.badRequest().body("El email ya está registrado");
