@@ -63,4 +63,47 @@ class RegistroVehiculoServiceImplTest {
         when(registroRepository.findAll()).thenReturn(List.of(new com.restaurante.persistence.entity.RegistroVehiculoEntity()));
         assertFalse(vehiculoService.listarTodos().isEmpty());
     }
+
+    @Test
+    void registrarEntrada_lanzaExcepcionSiParqueaderoLleno() {
+        java.util.List<com.restaurante.persistence.entity.RegistroVehiculoEntity> ocupados = new java.util.ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            var v = new com.restaurante.persistence.entity.RegistroVehiculoEntity();
+            v.setEstado("ACTIVO");
+            v.setSalida(null);
+            ocupados.add(v);
+        }
+        when(registroRepository.findAll()).thenReturn(ocupados);
+
+        var dto = new com.restaurante.model.dto.request.RegistroVehiculoRequestDTO("NEW-999");
+        assertThrows(com.restaurante.exception.ParqueaderoLlenoException.class, () -> vehiculoService.registrarEntrada(dto));
+    }
+
+    @Test
+    void registrarEntrada_lanzaExcepcionSiPlacaYaEstacionada() {
+        var activo = new com.restaurante.persistence.entity.RegistroVehiculoEntity();
+        activo.setPlaca("DUP-123");
+        activo.setEstado("ACTIVO");
+        activo.setSalida(null);
+        when(registroRepository.findAll()).thenReturn(List.of(activo));
+
+        var dto = new com.restaurante.model.dto.request.RegistroVehiculoRequestDTO("DUP-123");
+        assertThrows(com.restaurante.exception.VehiculoYaEstacionadoException.class, () -> vehiculoService.registrarEntrada(dto));
+    }
+
+    @Test
+    void registrarSalidaPorPlaca_exitoso() {
+        var entity = new com.restaurante.persistence.entity.RegistroVehiculoEntity();
+        entity.setId(10L);
+        entity.setPlaca("OUT-456");
+        entity.setEstado("ACTIVO");
+        entity.setEntrada(java.time.LocalDateTime.now().minusHours(1));
+        when(registroRepository.findAll()).thenReturn(List.of(entity));
+        when(registroRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        var response = vehiculoService.registrarSalidaPorPlaca("OUT-456");
+        assertNotNull(response);
+        assertEquals("OUT-456", response.placa());
+        verify(registroRepository).save(any());
+    }
 }

@@ -49,6 +49,34 @@ class UsuarioDetailsServiceTest {
     }
 
     @Test
+    void testLoadUserByUsername_RolePrefix() {
+        String email = "mesero@bellaciao.com";
+        UsuarioEntity mockEntity = new UsuarioEntity();
+        mockEntity.setId(2L);
+        mockEntity.setEmail(email);
+        mockEntity.setPassword("hash");
+        mockEntity.setRol("ROLE_MESERO"); // Probando con prefijo incluido
+        when(usuarioRepositoryJPA.findByEmail(email)).thenReturn(Optional.of(mockEntity));
+
+        UserDetails userDetails = usuarioDetailsService.loadUserByUsername(email);
+        assertTrue(userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_MESERO")));
+    }
+
+    @Test
+    void testLoadUserByUsername_NullRole() {
+        String email = "cliente@bellaciao.com";
+        UsuarioEntity mockEntity = new UsuarioEntity();
+        mockEntity.setId(3L);
+        mockEntity.setEmail(email);
+        mockEntity.setPassword("hash");
+        mockEntity.setRol(null); // Rol nulo
+        when(usuarioRepositoryJPA.findByEmail(email)).thenReturn(Optional.of(mockEntity));
+
+        UserDetails userDetails = usuarioDetailsService.loadUserByUsername(email);
+        assertTrue(userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_CLIENTE")));
+    }
+
+    @Test
     void testLoadUserByUsername_NotFound() {
         // Arrange
         String email = "noexiste@bellaciao.com";

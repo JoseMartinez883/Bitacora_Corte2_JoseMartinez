@@ -113,6 +113,53 @@ class PlatoValidatorTest {
                 () -> platoValidator.validarDisponibilidad(plato));
     }
 
+    @Test
+    @DisplayName("validarLimitesPorCategoria: PIZZA con demasiados toppings")
+    void validarLimitesPorCategoria_pizzaToppingsExcedidos_lanzaExcepcion() {
+        List<String> toppings = List.of("1", "2", "3", "4", "5", "6");
+        assertThrows(LimiteToppingsExcedidoException.class,
+                () -> platoValidator.validarLimitesPorCategoria("PIZZA", toppings, null, null));
+    }
+
+    @Test
+    @DisplayName("validarLimitesPorCategoria: PIZZA con toppings validos")
+    void validarLimitesPorCategoria_pizzaToppingsValidos_noLanzaExcepcion() {
+        List<String> toppings = List.of("1", "2", "3");
+        assertDoesNotThrow(() -> platoValidator.validarLimitesPorCategoria("PIZZA", toppings, null, null));
+    }
+
+    @Test
+    @DisplayName("validarLimitesPorCategoria: PASTA con demasiadas proteinas")
+    void validarLimitesPorCategoria_pastaProteinasExcedidas_lanzaExcepcion() {
+        List<String> proteinas = List.of("P1", "P2", "P3");
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> platoValidator.validarLimitesPorCategoria("PASTA", null, proteinas, null));
+        assertTrue(ex.getMessage().contains("Límite excedido"));
+    }
+
+    @Test
+    @DisplayName("validarLimitesPorCategoria: PASTA con demasiadas salsas")
+    void validarLimitesPorCategoria_pastaSalsasExcedidas_lanzaExcepcion() {
+        List<String> salsas = List.of("S1", "S2", "S3", "S4");
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> platoValidator.validarLimitesPorCategoria("PASTA", null, null, salsas));
+        assertTrue(ex.getMessage().contains("Límite excedido"));
+    }
+
+    @Test
+    @DisplayName("validarLimitesPorCategoria: PASTA con validos")
+    void validarLimitesPorCategoria_pastaValida_noLanzaExcepcion() {
+        List<String> proteinas = List.of("P1", "P2");
+        List<String> salsas = List.of("S1", "S2", "S3");
+        assertDoesNotThrow(() -> platoValidator.validarLimitesPorCategoria("PASTA", null, proteinas, salsas));
+    }
+
+    @Test
+    @DisplayName("validarLimitesPorCategoria: Otra categoria")
+    void validarLimitesPorCategoria_otraCategoria_noHaceNada() {
+        assertDoesNotThrow(() -> platoValidator.validarLimitesPorCategoria("BEBIDA", null, null, null));
+    }
+
     // ===== helpers =====
 
     private Plato buildPlato(boolean disponible, boolean activo) {
