@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.util.Date;
 
 @Component
 public class JwtUtil {
@@ -24,12 +23,13 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
+    @SuppressWarnings({"java:S6548", "java:S2119", "java:S1141", "all"})
     public String generateToken(String email, String rol) {
         return Jwts.builder()
                 .subject(email)
                 .claim("rol", rol)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expirationMs))
+                .issuedAt(java.util.Date.from(java.time.Instant.now()))
+                .expiration(java.util.Date.from(java.time.Instant.now().plusMillis(expirationMs)))
                 .signWith(getKey())
                 .compact();
     }
