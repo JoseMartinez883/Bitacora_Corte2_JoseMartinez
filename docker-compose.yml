@@ -4,7 +4,7 @@ version: '3.9'
 services:
 
   api:
-    build: .                        # construye desde el Dockerfile local
+    build: . # construye desde el Dockerfile local
     container_name: restaurante-api
     ports:
       - "8080:8080"
@@ -21,7 +21,7 @@ services:
       MONGO_DB: restaurante
       MONGO_USER: admin
       MONGO_PASSWORD: admin
-      JWT_SECRET: ${JWT_SECRET}   # viene del .env — no hardcodeado aquí
+      JWT_SECRET: ${JWT_SECRET} # viene del .env — no hardcodeado aquí
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
     depends_on:
@@ -40,11 +40,11 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -58,7 +58,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: admin
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - mongo-data:/data/db
     networks:
