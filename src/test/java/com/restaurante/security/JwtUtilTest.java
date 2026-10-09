@@ -17,7 +17,7 @@ class JwtUtilTest {
     @BeforeEach
     void setUp() {
         jwtUtil = new JwtUtil();
-        // Usamos ReflectionTestUtils para inyectar las propiedades @Value sin levantar todo el contexto de Spring
+        // Configurando propiedades
         ReflectionTestUtils.setField(jwtUtil, "secret", testSecret);
         ReflectionTestUtils.setField(jwtUtil, "expirationMs", testExpirationMs);
     }
