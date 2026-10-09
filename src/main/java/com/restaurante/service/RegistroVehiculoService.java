@@ -7,6 +7,7 @@ import java.util.List;
 public interface RegistroVehiculoService {
     RegistroVehiculoResponseDTO registrarEntrada(RegistroVehiculoRequestDTO dto);
     RegistroVehiculoResponseDTO registrarSalida(Long id);
+    RegistroVehiculoResponseDTO registrarSalidaPorPlaca(String placa);
     List<RegistroVehiculoResponseDTO> listarActivos();
     List<RegistroVehiculoResponseDTO> listarTodos();
 }

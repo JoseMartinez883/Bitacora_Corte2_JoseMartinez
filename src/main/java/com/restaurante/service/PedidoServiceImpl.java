@@ -89,11 +89,11 @@ public class PedidoServiceImpl implements PedidoService {
         boolean isMesero = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_MESERO"));
         boolean isAdmin = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
-        if (dto.estadoDestino() == EstadoPedido.EN_PREPARACION || dto.estadoDestino() == EstadoPedido.LISTO) {
-            if (!isChef && !isAdmin) throw new org.springframework.security.access.AccessDeniedException("Solo el Chef puede cambiar a este estado.");
+        if ((dto.estadoDestino() == EstadoPedido.EN_PREPARACION || dto.estadoDestino() == EstadoPedido.LISTO) && (!isChef && !isAdmin)) {
+            throw new org.springframework.security.access.AccessDeniedException("Solo el Chef puede cambiar a este estado.");
         }
-        if (dto.estadoDestino() == EstadoPedido.ENTREGADO) {
-            if (!isMesero && !isAdmin) throw new org.springframework.security.access.AccessDeniedException("Solo el Mesero puede entregar el pedido.");
+        if (dto.estadoDestino() == EstadoPedido.ENTREGADO && (!isMesero && !isAdmin)) {
+            throw new org.springframework.security.access.AccessDeniedException("Solo el Mesero puede entregar el pedido.");
         }
 
         Pedido pedido = pedidoRepository.findById(id).map(pedidoEntityMapper::toDomain).orElseThrow(() -> new PedidoNotFoundException(id));
@@ -107,8 +107,17 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public void eliminar(UUID id) {
-        if (!pedidoRepository.existsById(id)) throw new PedidoNotFoundException(id);
+        log.info("Iniciando eliminación/cancelación de pedido con ID: {}", id);
+        var entity = pedidoRepository.findById(id).orElseThrow(() -> {
+            log.warn("No se puede eliminar: pedido con ID {} no encontrado", id);
+            return new PedidoNotFoundException(id);
+        });
+        if (entity.getEstado() != EstadoPedido.RECIBIDO) {
+            log.warn("No se puede eliminar pedido {}: estado actual es {} (ya pasó a cocina o fue entregado)", id, entity.getEstado());
+            throw new com.restaurante.exception.PedidoEnCocinaException(entity.getEstado());
+        }
         pedidoRepository.deleteById(id);
+        log.info("Pedido con ID {} cancelado y eliminado exitosamente", id);
     }
 
     private void guardarEventoMongo(UUID idPedido, String estadoAnterior, String estadoNuevo, String usuario) {

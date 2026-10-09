@@ -1,6 +1,8 @@
 package com.restaurante.service;
 
+import com.restaurante.exception.ParqueaderoLlenoException;
 import com.restaurante.exception.VehiculoNotFoundException;
+import com.restaurante.exception.VehiculoYaEstacionadoException;
 import com.restaurante.mapper.RegistroVehiculoEntityMapper;
 import com.restaurante.mapper.RegistroVehiculoMapperIn;
 import com.restaurante.mapper.RegistroVehiculoMapperOut;
@@ -17,6 +19,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RegistroVehiculoServiceImpl implements RegistroVehiculoService {
+
+    private static final int CAPACIDAD_MAXIMA_PARQUEADERO = 20;
+    private static final String ESTADO_ACTIVO = "ACTIVO";
+
     private final RegistroVehiculoRepositoryJPA registroRepository;
     private final RegistroVehiculoEntityMapper entityMapper;
     private final RegistroVehiculoMapperIn mapperIn;
@@ -24,24 +30,79 @@ public class RegistroVehiculoServiceImpl implements RegistroVehiculoService {
 
     @Override
     public RegistroVehiculoResponseDTO registrarEntrada(RegistroVehiculoRequestDTO dto) {
+        log.info("Iniciando registro de entrada para vehículo con placa: '{}'", dto.placa());
+
+        // 1. Validar límite de cupos del parqueadero (ej. 20 cupos)
+        long activos = registroRepository.findAll().stream()
+                .filter(v -> v.getSalida() == null && ESTADO_ACTIVO.equalsIgnoreCase(v.getEstado()))
+                .count();
+        if (activos >= CAPACIDAD_MAXIMA_PARQUEADERO) {
+            log.warn("Ingreso denegado: parqueadero lleno con {} cupos ocupados", CAPACIDAD_MAXIMA_PARQUEADERO);
+            throw new ParqueaderoLlenoException(CAPACIDAD_MAXIMA_PARQUEADERO);
+        }
+
+        // 2. Validar que la placa no se encuentre ya activa dentro del parqueadero (Conflicto 409)
+        boolean yaEstacionado = registroRepository.findAll().stream()
+                .anyMatch(v -> v.getPlaca() != null && v.getPlaca().equalsIgnoreCase(dto.placa())
+                        && v.getSalida() == null && ESTADO_ACTIVO.equalsIgnoreCase(v.getEstado()));
+        if (yaEstacionado) {
+            log.warn("Ingreso denegado: la placa '{}' ya tiene una estancia activa en el parqueadero", dto.placa());
+            throw new VehiculoYaEstacionadoException(dto.placa());
+        }
+
         RegistroVehiculo registro = mapperIn.toDomain(dto);
-        return mapperOut.toResponse(entityMapper.toDomain(registroRepository.save(entityMapper.toEntity(registro))));
+        var guardado = entityMapper.toDomain(registroRepository.save(entityMapper.toEntity(registro)));
+        log.info("Vehículo '{}' registrado exitosamente en el parqueadero con ID: {}", guardado.getPlaca(), guardado.getId());
+        return mapperOut.toResponse(guardado);
     }
 
     @Override
     public RegistroVehiculoResponseDTO registrarSalida(Long id) {
-        RegistroVehiculo registro = registroRepository.findById(id).map(entityMapper::toDomain).orElseThrow(() -> new VehiculoNotFoundException(id));
+        log.info("Registrando salida de vehículo con ID: {}", id);
+        RegistroVehiculo registro = registroRepository.findById(id).map(entityMapper::toDomain)
+                .orElseThrow(() -> {
+                    log.warn("Vehículo con ID {} no encontrado para registrar salida", id);
+                    return new VehiculoNotFoundException(id);
+                });
         registro.registrarSalida();
-        return mapperOut.toResponse(entityMapper.toDomain(registroRepository.save(entityMapper.toEntity(registro))));
+        var guardado = entityMapper.toDomain(registroRepository.save(entityMapper.toEntity(registro)));
+        log.info("Salida registrada para vehículo con ID: {}. Cobro liquidado: ${}", id, guardado.getCobro());
+        return mapperOut.toResponse(guardado);
+    }
+
+    @Override
+    public RegistroVehiculoResponseDTO registrarSalidaPorPlaca(String placa) {
+        log.info("Registrando salida de vehículo con placa: '{}'", placa);
+        RegistroVehiculo registro = registroRepository.findAll().stream()
+                .filter(v -> v.getPlaca() != null && v.getPlaca().equalsIgnoreCase(placa)
+                        && v.getSalida() == null && ESTADO_ACTIVO.equalsIgnoreCase(v.getEstado()))
+                .findFirst()
+                .map(entityMapper::toDomain)
+                .orElseThrow(() -> {
+                    log.warn("No se encontró vehículo activo con placa: '{}'", placa);
+                    return new VehiculoNotFoundException(placa);
+                });
+        registro.registrarSalida();
+        var guardado = entityMapper.toDomain(registroRepository.save(entityMapper.toEntity(registro)));
+        log.info("Salida registrada para vehículo con placa '{}'. Cobro liquidado: ${}", placa, guardado.getCobro());
+        return mapperOut.toResponse(guardado);
     }
 
     @Override
     public List<RegistroVehiculoResponseDTO> listarActivos() {
-        return registroRepository.findAll().stream().filter(v -> v.getSalida() == null && "ACTIVO".equals(v.getEstado())).map(entityMapper::toDomain).map(mapperOut::toResponse).toList();
+        log.info("Consultando vehículos actualmente activos en el parqueadero");
+        return registroRepository.findAll().stream()
+                .filter(v -> v.getSalida() == null && ESTADO_ACTIVO.equalsIgnoreCase(v.getEstado()))
+                .map(entityMapper::toDomain)
+                .map(mapperOut::toResponse)
+                .toList();
     }
 
     @Override
     public List<RegistroVehiculoResponseDTO> listarTodos() {
-        return registroRepository.findAll().stream().map(entityMapper::toDomain).map(mapperOut::toResponse).toList();
+        return registroRepository.findAll().stream()
+                .map(entityMapper::toDomain)
+                .map(mapperOut::toResponse)
+                .toList();
     }
 }

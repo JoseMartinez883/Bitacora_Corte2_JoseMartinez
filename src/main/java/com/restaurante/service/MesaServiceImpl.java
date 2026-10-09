@@ -21,19 +21,30 @@ public class MesaServiceImpl implements MesaService {
 
     @Override
     public List<MesaResponseDTO> listarTodas() {
+        log.info("Listando todas las mesas registradas");
         return mesaRepository.findAll().stream().map(mesaEntityMapper::toDomain).map(mesaMapperOut::toResponse).toList();
     }
 
     @Override
     public MesaResponseDTO obtenerMesaPorId(Long id) {
-        Mesa mesa = mesaRepository.findById(id).map(mesaEntityMapper::toDomain).orElseThrow(() -> new MesaNotFoundException(id));
+        log.debug("Consultando mesa con ID: {}", id);
+        Mesa mesa = mesaRepository.findById(id).map(mesaEntityMapper::toDomain).orElseThrow(() -> {
+            log.warn("Mesa no encontrada con ID: {}", id);
+            return new MesaNotFoundException(id);
+        });
         return mesaMapperOut.toResponse(mesa);
     }
 
     @Override
     public MesaResponseDTO abrirCuenta(Long idMesa) {
-        Mesa mesa = mesaRepository.findById(idMesa).map(mesaEntityMapper::toDomain).orElseThrow(() -> new MesaNotFoundException(idMesa));
+        log.info("Iniciando apertura de cuenta para mesa ID: {}", idMesa);
+        Mesa mesa = mesaRepository.findById(idMesa).map(mesaEntityMapper::toDomain).orElseThrow(() -> {
+            log.warn("Fallo al abrir cuenta: mesa ID {} no encontrada", idMesa);
+            return new MesaNotFoundException(idMesa);
+        });
         mesa.abrirCuenta();
-        return mesaMapperOut.toResponse(mesaEntityMapper.toDomain(mesaRepository.save(mesaEntityMapper.toEntity(mesa))));
+        var guardada = mesaEntityMapper.toDomain(mesaRepository.save(mesaEntityMapper.toEntity(mesa)));
+        log.info("Cuenta abierta exitosamente para mesa ID: {}", idMesa);
+        return mesaMapperOut.toResponse(guardada);
     }
 }
