@@ -1,4 +1,34 @@
+**Datos personales:**
+- **Nombre y Apellido:** Jose Alejandro Martinez Arias
+- **Código de Estudiante:** 1000104385
+- **Curso:** Desarrollo y operaciones de software - DOSW
+
+
 # Bella CIAO - Cocina Italiana
+
+# Índice
+- [SEMANA 07](#semana-07)
+  - [🏛️ Diagrama de Contexto del Sistema (Modelo C4 - Nivel 1)](#%EF%B8%8F-diagrama-de-contexto-del-sistema-modelo-c4---nivel-1)
+- [SEMANA 08](#semana-08)
+  - [Diagrama de Clases Conceptual (Modelo de Dominio)](#diagrama-de-clases-conceptual-modelo-de-dominio)
+  - [Diagrama General (Visión Global)](#diagrama-general-visión-global)
+  - [Diagrama de Componentes (Arquitectura General)](#diagrama-de-componentes-arquitectura-general)
+  - [Diagrama de Componentes Específicos (Nivel de Implementación)](#diagrama-de-componentes-específicos-nivel-de-implementación)
+  - [📊 Diagramas de Secuencia del Sistema - Restaurante Bella Ciao](#-diagramas-de-secuencia-del-sistema---restaurante-bella-ciao)
+- [SEMANA 09](#semana-09)
+  - [⚖️ Justificación de la Persistencia Mixta (SQL + NoSQL)](#%E2%9A%96%EF%B8%8F-justificación-de-la-persistencia-mixta-sql--nosql)
+  - [Modelo Físico (NoSQL - MongoDB)](#modelo-físico-nosql---mongodb)
+  - [Diagrama Entidad-Relación (PostgreSQL)](#diagrama-entidad-relación-postgresql)
+  - [🛡️ Matriz de Roles y Autorización (RBAC) - Restaurante Bella Ciao](#%EF%B8%8F-matriz-de-roles-y-autorización-rbac---restaurante-bella-ciao)
+- [SEMANA 10](#semana-10)
+  - [🔒 Seguridad en APIs Spring Boot](#-seguridad-en-apis-spring-boot)
+  - [Matriz Exhaustiva de Funcionalidades y Roles (S09 - Endpoint por Endpoint)](#matriz-exhaustiva-de-funcionalidades-y-roles-s09---endpoint-por-endpoint)
+  - [📸 Evidencias de Pruebas de Seguridad](#-evidencias-de-pruebas-de-seguridad)
+  - [🐳 Despliegue y Orquestación con Docker](#-despliegue-y-orquestación-con-docker)
+  - [🚀 CI/CD y Despliegue en la Nube (Semana 10)](#-cicd-y-despliegue-en-la-nube-semana-10)
+  - [📊 Rectificación de Pruebas y Calidad Finales](#-rectificación-de-pruebas-y-calidad-finales)
+
+---
 
 <p align="center">
   <img src="docs/images/BellaCiaoLogo.png" alt="Bella Ciao Logo" width="600" />
@@ -8,7 +38,40 @@ Plataforma web integral para la digitalización operativa y comercial de un rest
 
 ---
 
-## Diagrama de Clases Conceptual (Modelo de Dominio)
+## SEMANA 07
+
+### 🏛️ Diagrama de Contexto del Sistema (Modelo C4 - Nivel 1)
+
+El modelo C4 permite visualizar la arquitectura del software a través de distintos niveles de abstracción. El **Diagrama de Contexto (Nivel 1)** define las fronteras del sistema, identificando los actores humanos que interactúan con la solución y las integraciones con servicios externos que completan el ecosistema operativo del restaurante **Bella Ciao**:
+
+<p align="center">
+  <img src="docs/uml/DiagramContext.png" alt="Diagrama de Contexto C4 - Sistema Restaurante Bella Ciao" width="95%" />
+</p>
+
+<p align="center"><i>Figura: Diagrama de Contexto C4 (Nivel 1) representando los roles de usuario, el Sistema Central Bella Ciao y los sistemas externos integrados.</i></p>
+
+### 📖 Análisis Arquitectónico del Contexto (C4 Nivel 1):
+
+1. **🏢 Sistema Central (Core del Negocio):**
+
+   * **Sistema Central Bella Ciao (`Software System`):** Es el núcleo de la solución de software desarrollada. Centraliza la lógica operativa y comercial: administración del menú interactivo de pastas y pizzas personalizadas, gestión concurrente de mesas, emisión de comandas a cocina, liquidación de cuentas con propina sugerida y control vehicular en el parqueadero.
+2. **👥 Actores y Roles (`Person`):**
+
+   * **Cliente / Comensal:** Usuario final que interactúa con la plataforma para consultar la carta digital, armar pedidos personalizados, reservar mesas para eventos futuros y calificar la experiencia gastronómica mediante reseñas.
+   * **Mesero:** Personal de servicio en sala responsable de la apertura de mesas, registro inmediato de órdenes solicitadas por los clientes, seguimiento del estado de preparación y solicitud de precuentas para el cobro.
+   * **Personal de Cocina (Chef / Cocinero):** Equipo operativo en cocina que visualiza el flujo de comandas entrantes a través de la pantalla/tablero de preparación y actualiza sus estados en tiempo real (`PENDIENTE`, `EN_PREPARACION`, `LISTO`).
+   * **Administrador:** Rol con máximos privilegios encargado de la configuración del catálogo de platos, control del inventario de ingredientes, gestión de cuentas de usuario, asignación de tarifas de parqueadero y auditoría financiera de ventas.
+3. **☁️ Integraciones con Sistemas Externos (`External Software Systems`):**
+
+   * **Proveedor de Identidad (Google OAuth2):** Servicio de autenticación federada y OpenID Connect (OIDC) que garantiza el inicio de sesión seguro y validación de tokens de identidad sin exponer credenciales críticas.
+   * **Pasarela de Pagos (Payment Gateway):** Plataforma bancaria externa que procesa transacciones electrónicas (tarjetas de crédito/débito, transferencias) tras el cierre de la cuenta y retorna la confirmación de recaudo al sistema.
+   * **Facturación Electrónica:** Servicio gubernamental / fiscal externo que recibe la liquidación final de la venta y emite el comprobante digital fiscal reglamentario (resolución fiscal).
+
+---
+
+## SEMANA 08
+
+### Diagrama de Clases Conceptual (Modelo de Dominio)
 
 El siguiente diagrama de clases ilustra la estructura conceptual y las entidades centrales del negocio (Restaurante Italiano), detallando las cardinalidades y asociaciones que dan vida a la lógica operativa:
 
@@ -47,7 +110,7 @@ A continuación, puedes desplegar los siguientes apartados para visualizar con m
 
 ---
 
-## Diagrama de Componentes (Arquitectura General)
+### Diagrama de Componentes (Arquitectura General)
 
 El siguiente diagrama modela la arquitectura de alto nivel del sistema, ilustrando cómo interactúan los grandes bloques (componentes físicos y lógicos) de la plataforma:
 
@@ -66,7 +129,7 @@ El siguiente diagrama modela la arquitectura de alto nivel del sistema, ilustran
 
 ---
 
-## Diagrama de Componentes Específicos (Nivel de Implementación)
+### Diagrama de Componentes Específicos (Nivel de Implementación)
 
 A diferencia del diagrama general anterior, este modelo "hace zoom" en las entrañas del Back-End, mapeando exactamente cómo se entrelazan los paquetes, clases y dependencias inyectadas (`@Autowired`) de Spring Boot en la vida real:
 
@@ -74,7 +137,7 @@ A diferencia del diagrama general anterior, este modelo "hace zoom" en las entra
   <img src="docs/uml/DiagramEspecificComponents.png" alt="Diagrama de Componentes Específicos" width="100%" />
 </p>
 
-### 📖 Análisis Arquitectónico Detallado:
+#### 📖 Análisis Arquitectónico Detallado:
 
 1. **Desacoplamiento Estricto con Mappers:** Observando el flujo de izquierda a derecha, vemos que cada Controlador (ej. `PedidoController`) jamás envía Entidades crudas al Servicio. La petición pasa primero por un transformador (ej. `PedidoMapperIn`). A su vez, las respuestas del servicio regresan filtradas por un `PedidoMapperOut`. El uso exhaustivo de mappers de DTO blinda la aplicación contra la sobreexposición de datos.
 2. **Orquestación en la Capa de Servicio:** Los Servicios (como `MesaService`, `ReservaService` y `PedidoService`) actúan como nodos hiperconectados ("cerebros"). No solo se comunican con los mappers y repositorios de su mismo dominio, sino que se comunican entre sí para validar reglas de negocio complejas antes de guardar algo en la base de datos.
@@ -84,7 +147,50 @@ A diferencia del diagrama general anterior, este modelo "hace zoom" en las entra
 
 ---
 
-## ⚖️ Justificación de la Persistencia Mixta (SQL + NoSQL)
+### 📊 Diagramas de Secuencia del Sistema - Restaurante Bella Ciao
+
+#### 🍽️ 1. Realizar un pedido (Flujo de API REST y Manejo de Excepciones)
+
+Modela cómo viaja la información cuando un cliente envía un pedido a través de la API REST, ilustrando la separación de responsabilidades y el escudo global de errores (`@RestControllerAdvice`).
+
+<p align="center">
+  <img src="docs/uml/DiagramaFlowPedido.png" alt="Flujo Realizar Pedido" />
+</p>
+
+##### 📖 Explicación Técnica:
+
+* **Escenario 1 (Camino Feliz - 201 Created):** El `PedidoController` recibe la solicitud y valida la estructura sintáctica (`@Valid`). Luego delega en `PedidoServiceImpl` las reglas de negocio (disponibilidad y consistencia). La persistencia la ejecuta `PedidoRepositoryJPA` contra PostgreSQL, devolviendo un DTO inmutable al cliente.
+* **Escenario 2 (Control de Excepciones - 404/422):** Si un recurso no existe o se viola una restricción (como límites de toppings o mesa no disponible), el servicio lanza una excepción de dominio (`PlatoNotFoundException`). `GlobalExceptionHandler` intercepta la anomalía antes de que afecte al servidor y construye un `ErrorResponseDTO` uniforme con el código de estado HTTP adecuado.
+
+#### 🔐 2. Login usuario (Flujo de Autenticación y Autorización JWT / OAuth2)
+
+<p align="center">
+  <img src="docs/uml/DiagramaFlowJWT.png" alt="Flujo Login JWT" />
+</p>
+
+##### 📖 Explicación Técnica:
+
+* **Generación del Token (Login):** El cliente envía su correo y contraseña. `AuthenticationManager` delega la consulta a `UsuarioDetailsService`, que recupera el hash BCrypt de PostgreSQL. Una vez validada la clave, `JwtUtil` genera y firma un token JWT que incluye el rol del usuario (`ADMIN`, `CHEF`, `MESERO`, `CLIENTE`).
+* **Protección sin Estado (Stateless Filter):** En cada petición subsecuente, `JwtAuthFilter` actúa como middleware interceptor antes de tocar cualquier controlador. Extrae el token del header `Authorization: Bearer`, verifica la firma criptográfica y establece el contexto de seguridad en `SecurityContextHolder`. Si el token expira o es adulterado, Spring Security bloquea el acceso con `401 Unauthorized` o `403 Forbidden`.
+
+#### 🗄️ 3. Cambios de estados de pedido (Flujo de Persistencia y NoSQL)  )
+
+Modela cómo interactúan en simultáneo los dos motores de base de datos del restaurante: **PostgreSQL** para transacciones ACID y **MongoDB** para trazabilidad de eventos y catálogo documental.
+
+<p align="center">
+  <img src="docs/uml/DiagramaFlowPedidoEstados.png" alt="Flujo Estados de Pedido" />
+</p>
+
+##### 📖 Explicación Técnica:
+
+* **Persistencia Transaccional (PostgreSQL):** El estado operativo del pedido (`EN_PREPARACION`, `LISTO`, etc.) requiere garantías ACID (Atomicidad, Consistencia, Aislamiento y Durabilidad). Se almacena en PostgreSQL para asegurar integridad en cobros, asignación de mesas y control de cocina.
+* **Persistencia Documental y Trazabilidad (MongoDB):** Cada cambio de estado genera un evento inmutable tipo bitácora (`EventoPedidoDocument`) con el estado previo, el nuevo estado, la estampa de tiempo (`timestamp`) y el operador que realizó el cambio. Se almacena en MongoDB por su alto rendimiento en operaciones de inserción continua (*append-only*) y su flexibilidad de esquema documental para auditorías forenses.
+
+---
+
+## SEMANA 09
+
+### ⚖️ Justificación de la Persistencia Mixta (SQL + NoSQL)
 
 Para nuestro Restaurante Italiano se diseñó una arquitectura avanzada conocida como **Persistencia Mixta o Políglota**, la cual consiste en utilizar más de una tecnología de base de datos para aprovechar sus respectivas fortalezas, aplicando "la herramienta correcta para el trabajo correcto".
 
@@ -96,19 +202,19 @@ Se resuelve mediante un patrón de **Referencia Lógica Cruzada**. Los documento
 
 ---
 
-# Modelo Físico (NoSQL - MongoDB)
+### Modelo Físico (NoSQL - MongoDB)
 
 <p align="center">
   <img src="docs/uml/DiagramaNoRelational.png" alt="Diagrama NoSQL" />
 </p>
 
-## 📖 Explicación del Diagrama NoSQL
+#### 📖 Explicación del Diagrama NoSQL
 
 Este diagrama expone cómo se estructuran los datos dentro de MongoDB utilizando un Meta-Modelo Físico UML. Para visualizar las fronteras de los documentos, utilizamos el estereotipo `<<NoSql Document>>` en las tres colecciones principales: **EventoPedido**, **Resena** y **Catalogo**.
 
 Una característica clave de este modelado es el uso del **Patrón de Diseño Embebido**, representado gráficamente por las flechas de composición (los rombos negros). Este patrón se evidencia en la colección `Catalogo`, la cual guarda en su interior ("embebido") arreglos completos de URLs de imágenes y etiquetas comerciales (`ImagenUrl` y `EtiquetaComercial`). Agrupar todos estos datos en un solo documento físico elimina la necesidad de realizar complejas uniones (*JOINs*) al momento de consultar el menú, asegurando que el restaurante pueda cargar su galería de fotos a una velocidad extremadamente alta.
 
-## 🔑 Justificación de la Estrategia de Identificadores (MongoDB)
+#### 🔑 Justificación de la Estrategia de Identificadores (MongoDB)
 
 Alineado con la naturaleza distribuida de las bases de datos NoSQL, la generación de llaves primarias en MongoDB se maneja mediante atributos de tipo **String** anotados con `@Id`.
 
@@ -116,19 +222,19 @@ A diferencia del modelo numérico autoincremental de las bases de datos SQL (que
 
 ---
 
-# Diagrama Entidad-Relación (PostgreSQL)
+### Diagrama Entidad-Relación (PostgreSQL)
 
 <p align="center">
   <img src="docs/uml/DiagramaRelational.png" alt="Diagrama Relacional" />
 </p>
 
-## 📖 Justificación de la Estructura Relacional (PostgreSQL)
+#### 📖 Justificación de la Estructura Relacional (PostgreSQL)
 
 La arquitectura relacional elegida para este sistema prioriza la integridad de las transacciones financieras y operativas del restaurante, utilizando los principios ACID (Atomicidad, Consistencia, Aislamiento y Durabilidad) propios de PostgreSQL. El diseño sitúa a la entidad de **Pedido** como el eje central de la operación de cocina. Este pedido se relaciona en una proporción de uno a muchos (1:N) con la entidad **Mesa**, dado que una mesa física alberga múltiples servicios a lo largo de su vida útil. A su vez, el pedido se desglosa dinámicamente en una relación de uno a muchos (1:N) con los **Ítems del Pedido**, permitiendo registrar la multiplicidad de platos ordenados por los comensales. El ciclo operativo del pedido culmina en una relación estricta de uno a uno (1:1) con la **Cuenta**, una decisión fundamental que garantiza que la facturación, los impuestos y las propinas sean únicos, indivisibles y exactos por cada servicio prestado. Por otro lado, la interacción con el cliente se estructura conectando al **Usuario** con la **Reserva** en una relación de uno a muchos (1:N), ya que un comensal registrado puede agendar múltiples visitas en distintas fechas, relacionando lógicamente dicha reserva con la capacidad de las mesas del local.
 
 Una decisión arquitectónica destacada dentro de este modelo relacional es el **Bajo Acoplamiento (Loose Coupling)** aplicado al manejo del inventario (**Ingrediente**). En lugar de establecer una restricción física dura, como una Llave Foránea (Foreign Key) o una pesada tabla intermedia entre los ingredientes y los platos del menú, la asociación se gestiona puramente desde la capa de servicios en Java. En la base de datos, los platos almacenan las reglas italianas de preparación (como proteínas o salsas adicionales) en forma de simples listas de texto; luego, al momento de confirmarse un ítem en el pedido, el sistema localiza estos nombres en la tabla del inventario y realiza la deducción del stock en tiempo real. Esta estrategia de diseño es altamente recomendada porque evita la sobrecarga masiva de consultas relacionales (evitando costosos *JOINs* cada vez que un usuario lee el menú), y a su vez, prepara el terreno de manera perfecta para extraer todo el ecosistema de "Bodega/Inventario" hacia un microservicio independiente en futuras iteraciones, blindando así al sistema central de pedidos ante posibles rupturas de base de datos.
 
-## 🔑 Justificación de la Estrategia de IDs (Llaves Primarias)
+#### 🔑 Justificación de la Estrategia de IDs (Llaves Primarias)
 
 Respecto a la generación de identificadores, el sistema utiliza una estrategia mixta y altamente intencional:
 
@@ -137,54 +243,13 @@ Respecto a la generación de identificadores, el sistema utiliza una estrategia 
 
 ---
 
-# 📊 Diagramas de Secuencia del Sistema - Restaurante Bella Ciao
-
-## 🍽️ 1. Realizar un pedido (Flujo de API REST y Manejo de Excepciones)
-
-Modela cómo viaja la información cuando un cliente envía un pedido a través de la API REST, ilustrando la separación de responsabilidades y el escudo global de errores (`@RestControllerAdvice`).
-
-<p align="center">
-  <img src="docs/uml/DiagramaFlowPedido.png" alt="Flujo Realizar Pedido" />
-</p>
-
-### 📖 Explicación Técnica:
-
-* **Escenario 1 (Camino Feliz - 201 Created):** El `PedidoController` recibe la solicitud y valida la estructura sintáctica (`@Valid`). Luego delega en `PedidoServiceImpl` las reglas de negocio (disponibilidad y consistencia). La persistencia la ejecuta `PedidoRepositoryJPA` contra PostgreSQL, devolviendo un DTO inmutable al cliente.
-* **Escenario 2 (Control de Excepciones - 404/422):** Si un recurso no existe o se viola una restricción (como límites de toppings o mesa no disponible), el servicio lanza una excepción de dominio (`PlatoNotFoundException`). `GlobalExceptionHandler` intercepta la anomalía antes de que afecte al servidor y construye un `ErrorResponseDTO` uniforme con el código de estado HTTP adecuado.
-
-## 🔐 2. Login usuario (Flujo de Autenticación y Autorización JWT / OAuth2)
-
-<p align="center">
-  <img src="docs/uml/DiagramaFlowJWT.png" alt="Flujo Login JWT" />
-</p>
-
-### 📖 Explicación Técnica:
-
-* **Generación del Token (Login):** El cliente envía su correo y contraseña. `AuthenticationManager` delega la consulta a `UsuarioDetailsService`, que recupera el hash BCrypt de PostgreSQL. Una vez validada la clave, `JwtUtil` genera y firma un token JWT que incluye el rol del usuario (`ADMIN`, `CHEF`, `MESERO`, `CLIENTE`).
-* **Protección sin Estado (Stateless Filter):** En cada petición subsecuente, `JwtAuthFilter` actúa como middleware interceptor antes de tocar cualquier controlador. Extrae el token del header `Authorization: Bearer`, verifica la firma criptográfica y establece el contexto de seguridad en `SecurityContextHolder`. Si el token expira o es adulterado, Spring Security bloquea el acceso con `401 Unauthorized` o `403 Forbidden`.
-
-## 🗄️ 3. Cambios de estados de pedido (Flujo de Persistencia y NoSQL)  )
-
-Modela cómo interactúan en simultáneo los dos motores de base de datos del restaurante: **PostgreSQL** para transacciones ACID y **MongoDB** para trazabilidad de eventos y catálogo documental.
-
-<p align="center">
-  <img src="docs/uml/DiagramaFlowPedidoEstados.png" alt="Flujo Estados de Pedido" />
-</p>
-
-### 📖 Explicación Técnica:
-
-* **Persistencia Transaccional (PostgreSQL):** El estado operativo del pedido (`EN_PREPARACION`, `LISTO`, etc.) requiere garantías ACID (Atomicidad, Consistencia, Aislamiento y Durabilidad). Se almacena en PostgreSQL para asegurar integridad en cobros, asignación de mesas y control de cocina.
-* **Persistencia Documental y Trazabilidad (MongoDB):** Cada cambio de estado genera un evento inmutable tipo bitácora (`EventoPedidoDocument`) con el estado previo, el nuevo estado, la estampa de tiempo (`timestamp`) y el operador que realizó el cambio. Se almacena en MongoDB por su alto rendimiento en operaciones de inserción continua (*append-only*) y su flexibilidad de esquema documental para auditorías forenses.
-
----
-
-# 🛡️ Matriz de Roles y Autorización (RBAC) - Restaurante Bella Ciao
+### 🛡️ Matriz de Roles y Autorización (RBAC) - Restaurante Bella Ciao
 
 Esta matriz documenta el modelo de **Control de Acceso Basado en Roles (RBAC)** implementado en la API del restaurante, reflejando fielmente la seguridad configurada mediante `@PreAuthorize("hasRole(...)")` y `@PreAuthorize("hasAnyRole(...)")` en el código fuente de Spring Boot.
 
 ---
 
-## 📋 Matriz General de Permisos por Rol
+#### 📋 Matriz General de Permisos por Rol
 
 | ROL               | Qué funcionalidades PUEDE hacer                                                                                                                                                                                                                                                                                                                                                                   | Qué funcionalidades NO puede hacer                                                                                                                                                                                                                                      | Endpoints y Anotaciones Clave                                                                                                                                                  |
 | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -195,7 +260,11 @@ Esta matriz documenta el modelo de **Control de Acceso Basado en Roles (RBAC)** 
 
 ---
 
-## 🔍 Desglose Detallado Módulo por Módulo (Mapeo de Endpoints)
+## SEMANA 10
+
+### 🔒 Seguridad en APIs Spring Boot
+
+#### 📍 Desglose Detallado Módulo por Módulo (Mapeo de Endpoints)
 
 | Módulo / Endpoint                                            |    Método    | ADMIN | CHEF | MESERO |      CLIENTE      | Anotación de Seguridad                                       |
 | ------------------------------------------------------------- | :-----------: | :---: | :--: | :----: | :---------------: | ------------------------------------------------------------- |
@@ -218,7 +287,7 @@ Esta matriz documenta el modelo de **Control de Acceso Basado en Roles (RBAC)** 
 
 ---
 
-## 🔒 Mecanismos de Aplicación en el Código
+#### 🔒 Mecanismos de Aplicación en el Código
 
 1. **Filtro Stateless (`JwtAuthFilter`):** Cada petición extrae el claim `rol` del token JWT (`ROLE_ADMIN`, `ROLE_CHEF`, `ROLE_MESERO`, `ROLE_CLIENTE`).
 2. **Method Security Activado:** Habilitado en `SecurityConfig` mediante `@EnableMethodSecurity(prePostEnabled = true)`.
@@ -226,13 +295,13 @@ Esta matriz documenta el modelo de **Control de Acceso Basado en Roles (RBAC)** 
 
 ---
 
-# Matriz Exhaustiva de Funcionalidades y Roles (S09 - Endpoint por Endpoint)
+### Matriz Exhaustiva de Funcionalidades y Roles (S09 - Endpoint por Endpoint)
 
 Esta matriz detalla **absolutamente todos los endpoints** del sistema, indicando qué roles tienen acceso a cada uno, el método HTTP, la ruta exacta, la anotación de seguridad (`@PreAuthorize`) aplicada en el código fuente y su descripción funcional.
 
 Esta matriz sirve como fuente de la verdad para las políticas de autorización (RBAC) implementadas mediante Spring Security y JWT en el proyecto.
 
-## 1. Módulo de Autenticación (`AuthController`)
+#### 1. Módulo de Autenticación (`AuthController`)
 
 | Endpoint                  | Método HTTP | Anotación de Seguridad  | Roles Permitidos     | Descripción Funcional                                      |
 | :------------------------ | :----------- | :----------------------- | :------------------- | :---------------------------------------------------------- |
@@ -241,7 +310,7 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
 
 *Nota: Las rutas `/auth` y `/api/auth` también están mapeadas hacia estos endpoints.*
 
-## 2. Módulo de Platos y Menú
+#### 2. Módulo de Platos y Menú
 
 ### `PlatoController` (`/api/v1/platos`)
 
@@ -271,7 +340,7 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
 | `/api/v1/catalogos/{id}`            | `PUT`      | `@PreAuthorize("hasAnyRole('ADMIN', 'CHEF')")` | **ADMIN, CHEF**               | Actualiza las imágenes de un catálogo existente.            |
 | `/api/v1/catalogos/{id}`            | `DELETE`   | `@PreAuthorize("hasRole('ADMIN')")`            | **ADMIN**                     | Elimina un catálogo de imágenes en MongoDB.                 |
 
-## 3. Módulo de Pedidos y Cocina (`PedidoController` -> `/api/v1/pedidos`)
+#### 3. Módulo de Pedidos y Cocina (`PedidoController` -> `/api/v1/pedidos`)
 
 | Endpoint                                      | Método HTTP | Anotación de Seguridad                                       | Roles Permitidos                 | Descripción Funcional                                                 |
 | :-------------------------------------------- | :----------- | :------------------------------------------------------------ | :------------------------------- | :--------------------------------------------------------------------- |
@@ -283,7 +352,7 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
 | `/api/v1/pedidos/{id}`                      | `DELETE`   | `@PreAuthorize("hasRole('ADMIN')")`                         | **ADMIN**                  | Elimina por completo un pedido del sistema.                            |
 | `/api/v1/pedidos/{idPedido}/items/{idItem}` | `DELETE`   | `@PreAuthorize("hasAnyRole('ADMIN', 'MESERO', 'CLIENTE')")` | **ADMIN, MESERO, CLIENTE** | Elimina un ítem específico dentro de un pedido y recalcula el total. |
 
-## 4. Módulo de Mesas, Cuentas y Reservas
+#### 4. Módulo de Mesas, Cuentas y Reservas
 
 ### `MesaController` (`/api/v1/mesas`) - *Seguridad a Nivel de Clase*
 
@@ -310,7 +379,7 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
 | `/api/v1/reservas/{id}`          | `PUT`      | `@PreAuthorize("hasAnyRole('ADMIN', 'MESERO', 'CLIENTE')")` | **ADMIN, MESERO, CLIENTE** | Actualiza los datos de la reserva (personas, horario).        |
 | `/api/v1/reservas/{id}/cancelar` | `DELETE`   | `@PreAuthorize("hasAnyRole('ADMIN', 'MESERO', 'CLIENTE')")` | **ADMIN, MESERO, CLIENTE** | Cancela una reserva existente.                                |
 
-## 5. Módulo de Feedback (`ResenaController` -> `/api/v1/resenas`)
+#### 5. Módulo de Feedback (`ResenaController` -> `/api/v1/resenas`)
 
 | Endpoint                 | Método HTTP | Anotación de Seguridad                | Roles Permitidos                    | Descripción Funcional                                                                     |
 | :----------------------- | :----------- | :------------------------------------- | :---------------------------------- | :----------------------------------------------------------------------------------------- |
@@ -319,7 +388,7 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
 | `/api/v1/resenas/{id}` | `GET`      | `@PreAuthorize("isAuthenticated()")` | **Cualquier rol autenticado** | Obtiene detalles de una reseña por ID en MongoDB.                                         |
 | `/api/v1/resenas/{id}` | `DELETE`   | `@PreAuthorize("isAuthenticated()")` | **Cualquier rol autenticado** | Elimina una reseña (El servicio valida que el autor o un ADMIN sean quienes lo ejecuten). |
 
-## 6. Módulo de Reportes Gerenciales (`ReporteController` -> `/api/v1/reportes`) - *Seguridad a Nivel de Clase*
+#### 6. Módulo de Reportes Gerenciales (`ReporteController` -> `/api/v1/reportes`) - *Seguridad a Nivel de Clase*
 
 | Endpoint                              | Método HTTP | Anotación de Seguridad (Clase)       | Roles Permitidos | Descripción Funcional                                         |
 | :------------------------------------ | :----------- | :------------------------------------ | :--------------- | :------------------------------------------------------------- |
@@ -327,7 +396,7 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
 | `/api/v1/reportes/platos-populares` | `GET`      | `@PreAuthorize("hasRole('ADMIN')")` | **ADMIN**  | Consulta el top de platos más vendidos.                       |
 | `/api/v1/reportes/ingresos`         | `GET`      | `@PreAuthorize("hasRole('ADMIN')")` | **ADMIN**  | Calcula los ingresos totales del restaurante.                  |
 
-## 7. Módulo de Parqueadero (`VehiculoController` -> `/api/v1/vehiculos` y `/api/v1/parqueadero`) - *Seguridad a Nivel de Clase*
+#### 7. Módulo de Parqueadero (`VehiculoController` -> `/api/v1/vehiculos` y `/api/v1/parqueadero`) - *Seguridad a Nivel de Clase*
 
 | Endpoint                             | Método HTTP        | Anotación de Seguridad (Clase)       | Roles Permitidos | Descripción Funcional                                                       |
 | :----------------------------------- | :------------------ | :------------------------------------ | :--------------- | :--------------------------------------------------------------------------- |
@@ -339,7 +408,7 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
 
 ---
 
-## 8. Mitigación de Vulnerabilidades OWASP Top 10
+#### 8. Mitigación de Vulnerabilidades OWASP Top 10
 
 | Vulnerabilidad                                                | Estrategia de Mitigación en el Código                                                                                                                                  | Ubicación (Clase/Archivo)                                                       |
 | :------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------- |
@@ -356,9 +425,9 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
 
 ---
 
-## 📸 Evidencias de Pruebas de Seguridad
+### 📸 Evidencias de Pruebas de Seguridad
 
-### Evidencia 1 — Autenticación Exitosa (Login 200 OK con JWT)
+#### Evidencia 1 — Autenticación Exitosa (Login 200 OK con JWT)
 
 * **Endpoint:** `POST https://localhost:8443/api/auth/login`
 * **Descripción:** Se realiza una petición autenticada vía HTTPS enviando las credenciales válidas en el cuerpo JSON (`admin@restaurante.com` / `admin123`). Spring Security valida contra la base de datos PostgreSQL, comprueba el hash BCrypt y emite una respuesta HTTP `200 OK` junto con el token JWT firmado con el rol correspondiente (`ROLE_ADMIN`).
@@ -367,7 +436,7 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
   <img src="docs/images/LoginSuccessful.png" alt="LoginSuccessful.png" />
 </p>
 
-### Evidencia 2 — Autenticación Fallida (Login 401 Unauthorized)
+#### Evidencia 2 — Autenticación Fallida (Login 401 Unauthorized)
 
 * **Endpoint:** `POST https://localhost:8443/api/auth/login`
 * **Descripción:** Se envía una solicitud de inicio de sesión con una contraseña incorrecta (`passwordErronea999`). Spring Security intercepta las credenciales contra el hash en base de datos, rechaza la autenticación de forma segura y devuelve un código de estado HTTP `401 Unauthorized` con el mensaje de error correspondiente, evitando la emisión de tokens y protegiendo el sistema contra accesos no autorizados.
@@ -379,7 +448,7 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
   <img src="docs/images/LoginFailed02.png" alt="LoginFailed02.png" />
 </p>
 
-### Evidencia 3 — Protección de Endpoint: Acceso Sin Token (401 Unauthorized)
+#### Evidencia 3 — Protección de Endpoint: Acceso Sin Token (401 Unauthorized)
 
 * **Endpoint:** `GET https://localhost:8443/api/v1/platos`
 * **Descripción:** Se intenta consultar un endpoint protegido de la API sin proveer la cabecera `Authorization` ni ningún token JWT. El filtro de seguridad `JwtAuthFilter` y el `AuthenticationEntryPoint` de Spring Security interceptan la petición antes de llegar al controlador, rechazando la solicitud con un código HTTP `401 Unauthorized` y protegiendo los recursos privados del backend.
@@ -391,7 +460,7 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
   <img src="docs/images/NoToken02.png" alt="NoToken02.png" />
 </p>
 
-### Evidencia 4 — Validación de Integridad: Token JWT Inválido (401 Unauthorized)
+#### Evidencia 4 — Validación de Integridad: Token JWT Inválido (401 Unauthorized)
 
 * **Endpoint:** `GET https://localhost:8443/api/v1/platos`
 * **Cabecera:** `Authorization: Bearer tokenbasura_invalido_12345`
@@ -404,7 +473,7 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
   <img src="docs/images/TokenInvalid02.png" alt="TokenInvalid02.png" />
 </p>
 
-### Evidencia 5 — Control de Acceso RBAC: Rol Insuficiente (403 Forbidden)
+#### Evidencia 5 — Control de Acceso RBAC: Rol Insuficiente (403 Forbidden)
 
 * **Endpoint:** `POST https://localhost:8443/api/v1/platos`
 * **Rol utilizado:** `ROLE_CLIENTE`
@@ -417,7 +486,7 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
   <img src="docs/images/AccesDenied02.png" alt="AccesDenied02.png" />
 </p>
 
-### Evidencia 6 — Expiración de Token JWT (401 Unauthorized por TTL)
+#### Evidencia 6 — Expiración de Token JWT (401 Unauthorized por TTL)
 
 * **Endpoint:** `GET https://localhost:8443/api/v1/platos`
 * **Cabecera:** `Authorization: Bearer <token_expirado>`
@@ -433,7 +502,7 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
   <img src="docs/images/TokenExpirated03.png" alt="TokenExpirated03.png" />
 </p>
 
-### Evidencia 7 — Control de Acceso RBAC: Rol Autorizado (201 Created)
+#### Evidencia 7 — Control de Acceso RBAC: Rol Autorizado (201 Created)
 
 * **Endpoint:** `POST https://localhost:8443/api/v1/platos`
 * **Rol utilizado:** `ROLE_CHEF` (o `ROLE_ADMIN`)
@@ -449,7 +518,7 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
   <img src="docs/images/AccesPermited03.png" alt="AccesPermited03.png" />
 </p>
 
-### Evidencia 8 — Documentación OpenAPI y Autenticación en Swagger UI (200 OK)
+#### Evidencia 8 — Documentación OpenAPI y Autenticación en Swagger UI (200 OK)
 
 * **Interfaz:** `https://localhost:8443/swagger-ui/index.html`
 * **Descripción:** Validación del esquema de autorización BearerAuth en Swagger UI. Se ingresa el token JWT a través del modal interactivo Authorize y se ejecuta la consulta al endpoint protegido `GET /api/v1/platos`. Swagger adjunta automáticamente la cabecera `Authorization: Bearer <token>`, el servidor autentica la petición de forma segura sobre HTTPS y devuelve una respuesta HTTP `200 OK` con los recursos del menú y los headers de seguridad correspondientes.
@@ -467,7 +536,7 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
   <img src="docs/images/SwaggerAuth04.png" alt="SwaggerAuth04.png" />
 </p>
 
-### Evidencia 9 — Almacenamiento Seguro de Contraseñas (BCrypt Hash en PostgreSQL)
+#### Evidencia 9 — Almacenamiento Seguro de Contraseñas (BCrypt Hash en PostgreSQL)
 
 * **Base de Datos:** PostgreSQL (`bellaciao_db` -> tabla `usuarios`)
 * **Descripción:** Consulta directa a la base de datos para verificar el cumplimiento del estándar OWASP en el almacenamiento de credenciales. Las contraseñas se encuentran procesadas con la función hash adaptativa BCrypt (`PasswordEncoder` con factor de costo 10), iniciando con el prefijo característico `$2a$10$...`. Se evidencia que bajo ninguna circunstancia se almacenan contraseñas en texto plano ni mediante algoritmos vulnerables (como MD5 o SHA-1).
@@ -476,7 +545,7 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
   <img src="docs/images/PasswordHashBD.png" alt="PasswordHashBD.png" />
 </p>
 
-### Evidencia 10 — Cabeceras de Seguridad HTTP (OWASP Security Headers)
+#### Evidencia 10 — Cabeceras de Seguridad HTTP (OWASP Security Headers)
 
 * **Endpoint analizado:** `https://localhost:8443/api/v1/platos`
 * **Descripción:** Inspección de las cabeceras HTTP de respuesta configuradas en `SecurityConfig.java`. Se comprueba la inyección automática de cabeceras recomendadas por OWASP:
@@ -489,7 +558,7 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
   <img src="docs/images/HeaderSecurity.png" alt="HeaderSecurity.png" />
 </p>
 
-### Evidencia 11 — Autenticación Federada con OAuth2 (Google Sign-In) y Emisión de JWT
+#### Evidencia 11 — Autenticación Federada con OAuth2 (Google Sign-In) y Emisión de JWT
 
 * **Proveedor de Identidad:** Google Identity Services (`/oauth2/authorization/google`)
 * **Descripción de la implementación:** Se implementó con éxito el flujo de autenticación OAuth2 utilizando a Google como proveedor de identidad, integrado de manera armónica con nuestro sistema Stateless de JWT.
@@ -505,19 +574,19 @@ Esta matriz sirve como fuente de la verdad para las políticas de autorización 
   <img src="docs/images/LoginGoogle02.png" alt="LoginGoogle02.png" />
 </p>
 
-### Evidencia 12 — Resultado de mvn test con las pruebas de seguridad en verde
+#### Evidencia 12 — Resultado de mvn test con las pruebas de seguridad en verde
 
 <p align="center">
   <img src="docs/images/MVNTestJWT.png" alt="TMVNTestJWT.png" />
 </p>
 
-# 🐳 Despliegue y Orquestación con Docker
+### 🐳 Despliegue y Orquestación con Docker
 
 Esta sección documenta la infraestructura en contenedores para el backend del restaurante **Bella Ciao**, permitiendo levantar la API y sus dos motores de bases de datos (**PostgreSQL 16** y **MongoDB 7**) de forma automática, reproducible y aislada.
 
 ---
 
-## 1. 🏗️ Arquitectura del Stack de Contenedores
+#### 1. 🏗️ Arquitectura del Stack de Contenedores
 
 El stack está orquestado mediante `docker-compose.yml` utilizando una red bridge interna (`restaurante-net`) y volúmenes persistentes:
 
@@ -543,7 +612,7 @@ El stack está orquestado mediante `docker-compose.yml` utilizando una red bridg
 
 ---
 
-## 2. 🚀 Instrucciones para Levantar el Stack
+#### 2. 🚀 Instrucciones para Levantar el Stack
 
 ### Requisitos Previos
 
@@ -585,7 +654,7 @@ El stack está orquestado mediante `docker-compose.yml` utilizando una red bridg
 
 ---
 
-## 3. 🔐 Variables de Entorno Requeridas
+#### 3. 🔐 Variables de Entorno Requeridas
 
 Las siguientes variables son consumidas por el contenedor a través del perfil `application-docker.yml`:
 
@@ -609,9 +678,9 @@ Las siguientes variables son consumidas por el contenedor a través del perfil `
 
 ---
 
-## 4. 📸 Evidencias de Funcionamiento
+#### 4. 📸 Evidencias de Funcionamiento
 
-### Evidencia 1: Verificación de Servicios y Salud del Stack en Docker Compose
+#### Evidencia 1: Verificación de Servicios y Salud del Stack en Docker Compose
 
 Se ejecutó el comando `docker compose ps` para comprobar la correcta orquestación de la arquitectura multicapa. Como se evidencia en la captura, los tres servicios que componen el sistema se encuentran desplegados y activos:
 
@@ -632,7 +701,7 @@ CONTAINER ID   IMAGE                              COMMAND                  STATU
 
 ---
 
-### Evidencia 2: Acceso y Disponibilidad de Swagger UI / OpenAPI desde Docker
+#### Evidencia 2: Acceso y Disponibilidad de Swagger UI / OpenAPI desde Docker
 
 Se verificó el acceso a la documentación interactiva OpenAPI/Swagger UI a través de la URL `http://localhost:8080/swagger-ui/index.html`. La captura demuestra que el contenedor `restaurante-api` expone correctamente sus servicios web hacia el host anfitrión en el puerto 8080, permitiendo visualizar e interactuar con los módulos de negocio (Reservas, Pedidos, Menú, Autenticación) sin requerir el IDE ni herramientas locales en ejecución, validando el empaquetado autónomo de la aplicación.
 
@@ -642,7 +711,7 @@ Se verificó el acceso a la documentación interactiva OpenAPI/Swagger UI a trav
 
 ---
 
-### Evidencia 3: Trazabilidad de Inicio Limpio y Sincronización de Base de Datos
+#### Evidencia 3: Trazabilidad de Inicio Limpio y Sincronización de Base de Datos
 
 Mediante la inspección de registros en tiempo real (`docker compose logs api`), se comprueba que el contenedor `restaurante-api` levantó bajo el perfil `docker` sin errores de conectividad o dependencias. En la evidencia se aprecian las sentencias SQL ejecutadas por Hibernate/JPA sobre el contenedor de PostgreSQL, validando la creación de esquemas y la ejecución exitosa del `DataInitializer` al insertar los usuarios iniciales del sistema (*Base de datos sincronizada con usuarios por defecto*). Esto certifica que la resolución de nombres en la red virtual de Docker (`restaurante-net`) y las credenciales inyectadas por variables de entorno funcionan correctamente.
 
@@ -670,7 +739,7 @@ Mediante la inspección de registros en tiempo real (`docker compose logs api`),
 
 ---
 
-### Evidencia 4: Persistencia de Datos y Comunicación Inter-Contenedor (Swagger ➔ Docker DBs)
+#### Evidencia 4: Persistencia de Datos y Comunicación Inter-Contenedor (Swagger ➔ Docker DBs)
 
 #### 1. Objetivo de la Evidencia
 
@@ -743,7 +812,7 @@ La prueba confirma:
 
 ---
 
-### Evidencia 5: Prueba de Resiliencia y Persistencia tras Reinicio de la API (`docker compose restart api`)
+#### Evidencia 5: Prueba de Resiliencia y Persistencia tras Reinicio de la API (`docker compose restart api`)
 
 #### Objetivo
 
@@ -784,7 +853,7 @@ Se cumple el principio de persistencia en entornos de contenedores: los contened
 
 ---
 
-### Evidencia 6: ☁️ Publicación de Imagen en Docker Hub
+#### Evidencia 6: ☁️ Publicación de Imagen en Docker Hub
 
 Se construyó y publicó exitosamente la imagen del backend en el registro público de **Docker Hub**, utilizando una estrategia de empaquetado **multietapa (*Multi-stage build*)** con **Eclipse Temurin 21 JRE Alpine**. Gracias a esta optimización, la imagen final resultante pesa tan solo **132.2 MB**, reduciendo la superficie de ataque y garantizando tiempos de descarga mínimos.
 
@@ -802,25 +871,25 @@ Se construyó y publicó exitosamente la imagen del backend en el registro públ
 
 ---
 
-# 🚀 CI/CD y Despliegue en la Nube (Semana 10)
+### 🚀 CI/CD y Despliegue en la Nube (Semana 10)
 
 Esta sección documenta la infraestructura automatizada de Integración Continua y Despliegue Continuo (CI/CD) implementada mediante **GitHub Actions**, el registro de imágenes en **Docker Hub**, y el despliegue multi-ambiente en **Microsoft Azure** con persistencia políglota relacional y no relacional administrada en la nube.
 
 ---
 
-## 📐 Diagrama de Despliegue (Arquitectura del Sistema)
+#### 📐 Diagrama de Despliegue (Arquitectura del Sistema)
 
 El siguiente modelo ilustra la topología física y lógica de la plataforma desplegada, detallando los nodos de ejecución, artefactos empaquetados, límites de ambientes, canales de comunicación y servicios gestionados en la nube:
 
 <p align="center">
-  <img src="docs/images/DiagramaDespliegue.png" alt="Diagrama de Despliegue - Arquitectura de Despliegue Bella Ciao" width="100%" />
+  <img src="docs/images/DiagramDeployment.png" alt="Diagrama de Despliegue - Arquitectura de Despliegue Bella Ciao" width="100%" />
 </p>
 
 <p align="center"><i>Figura: Arquitectura de Despliegue Multi-Ambiente (QA y PROD) en Microsoft Azure con Pipeline Automatizado de CI/CD.</i></p>
 
 ---
 
-### 📖 Análisis Arquitectónico y Descripción Detallada del Diagrama
+##### 📖 Análisis Arquitectónico y Descripción Detallada del Diagrama
 
 El diagrama de despliegue modela la distribución física y operativa del sistema bajo los principios de computación en la nube, infraestructura como código y automatización continua:
 
@@ -863,7 +932,7 @@ La arquitectura implementa dos zonas de ejecución independientes dentro de Azur
 
 ---
 
-## 🔐 Secrets Configurados en GitHub Actions
+#### 🔐 Secrets Configurados en GitHub Actions
 
 Para mantener la seguridad y evitar la exposición de credenciales sensibles en el código fuente versionado, se configuraron los siguientes Secrets en el repositorio (**Settings → Secrets and variables → Actions**):
 
@@ -881,14 +950,14 @@ Para mantener la seguridad y evitar la exposición de credenciales sensibles en 
 | `GOOGLE_CLIENT_SECRET` |  Global  | Clave secreta de cliente para autenticación OAuth2 con Google.                             |
 
 <p align="center">
-  <img src="docs/images/GitHubSecrets.png" alt="Secrets configurados en GitHub Actions" width="85%" />
+  <img src="docs/images/GitHubSecretsCI-CD.png" alt="Secrets configurados en GitHub Actions" width="85%" />
 </p>
 
 <p align="center"><i>Figura: Panel de Secrets configurados en GitHub Actions (sin exposición de valores).</i></p>
 
 ---
 
-## 🌍 Descripción y Estrategia de Ambientes (QA vs PROD)
+#### 🌍 Descripción y Estrategia de Ambientes (QA vs PROD)
 
 El ciclo de vida del software sigue una separación estricta de entornos para garantizar la estabilidad, resiliencia y seguridad de la API:
 
@@ -904,9 +973,9 @@ El ciclo de vida del software sigue una separación estricta de entornos para ga
 
 ---
 
-## ☁️ Evidencias de Despliegue en Microsoft Azure
+#### ☁️ Evidencias de Despliegue en Microsoft Azure
 
-### 🌐 App Service en Azure (Contenedor en Ejecución)
+##### 🌐 App Service en Azure (Contenedor en Ejecución)
 
 Se verificó el despliegue del contenedor en el servicio **Azure App Service** (`restaurante-api-qa`), confirmando el estado activo del servicio y la ejecución del contenedor Docker provisto desde Docker Hub:
 
@@ -916,14 +985,14 @@ Se verificó el despliegue del contenedor en el servicio **Azure App Service** (
 * **Plataforma:** Linux Container (PaaS)
 
 <p align="center">
-  <img src="docs/images/AzureAppServiceRunning.png" alt="Azure App Service corriendo contenedor" width="90%" />
+  <img src="docs/images/AppServiceAzureRunning.png" alt="Azure App Service corriendo contenedor" width="90%" />
 </p>
 
 <p align="center"><i>Figura: Panel de Azure App Service ejecutando el contenedor Docker en el ambiente QA.</i></p>
 
 ---
 
-### 🐳 Imágenes y Tags en Docker Hub
+#### 🐳 Imágenes y Tags en Docker Hub
 
 El pipeline automatizado publica las imágenes en el registro público de Docker Hub aplicando la convención de versionamiento estricta para QA:
 
@@ -944,7 +1013,7 @@ El pipeline automatizado publica las imágenes en el registro público de Docker
 
 ---
 
-### 🧪 Pipeline de Integración Continua y Despliegue en QA (GitHub Actions)
+#### 🧪 Pipeline de Integración Continua y Despliegue en QA (GitHub Actions)
 
 El flujo de trabajo `ci-qa.yml` se dispara automáticamente ante cualquier evento de `push` sobre las ramas `develop` o `main`. Se ejecutaron satisfactoriamente las tres etapas del ciclo de entrega continua:
 
@@ -953,14 +1022,14 @@ El flujo de trabajo `ci-qa.yml` se dispara automáticamente ante cualquier event
 3. **🚀 Desplegar a QA:** Actualización automática del contenedor en Azure App Service (`restaurante-api-qa`) e inyección cifrada de variables de entorno (PostgreSQL, MongoDB Cosmos DB, JWT y puerto 8081).
 
 <p align="center">
-  <img src="docs/images/PipelineVerdeQA.png" alt="Pipeline de QA en verde - GitHub Actions" width="90%" />
+  <img src="docs/images/DeployPipeline.png" alt="Pipeline de QA en verde - GitHub Actions" width="90%" />
 </p>
 
 <p align="center"><i>Figura: Ejecución exitosa del pipeline de QA con todos los jobs completados en verde.</i></p>
 
 ---
 
-### 🛡️ Compuerta de Seguridad y Aprobación Manual (Ambiente PROD)
+#### 🛡️ Compuerta de Seguridad y Aprobación Manual (Ambiente PROD)
 
 Alineado con las mejores prácticas de ingeniería de software para despliegues a entornos productivos, el flujo `ci-prod.yml` implementa una regla estricta de protección de entorno (**Environment Protection Rule** sobre `production`).
 
@@ -969,28 +1038,77 @@ Tras publicarse un tag de versión (`v1.0.0`) y compilarse la imagen de producci
 <p align="center">
   <img src="docs/images/DeployProdApproval.png" alt="Aprobación manual de despliegue a producción en GitHub Actions" width="90%" />
 </p>
+<p align="center">
+  <img src="docs/images/DeployProdApproval02.png" alt="Aprobación manual de despliegue a producción en GitHub Actions" width="90%" />
+</p>
 
 <p align="center"><i>Figura: Compuerta de aprobación manual pausando el despliegue a PROD hasta recibir autorización formal del administrador.</i></p>
 
 ---
 
-### 🚀 Despliegue Exitoso en Producción (PROD)
+#### 🚀 Despliegue Exitoso en Producción (PROD)
 
 Una vez otorgada la autorización manual por parte del revisor (`JoseMartinez883`), el flujo reanudó su ejecución de manera transparente, desplegando el contenedor en Azure App Service (`restaurante-api-prod`) y notificando el éxito del release:
 
 <p align="center">
-  <img src="docs/images/PipelineVerdeProd.png" alt="Pipeline de PROD completado en verde" width="90%" />
+  <img src="docs/images/DeployProdApproval03.png" alt="Pipeline de PROD completado en verde" width="90%" />
 </p>
 
 <p align="center"><i>Figura: Pipeline de producción completado en verde (Build, Deploy y Notificación) tras la aprobación manual.</i></p>
 
 ---
 
-## 🌐 URLs Públicas del Sistema Desplegado (Microsoft Azure)
+#### 🌐 URLs Públicas del Sistema Desplegado (Microsoft Azure)
 
 Los dos ambientes del sistema se encuentran activos, accesibles públicamente y conectados a sus respectivos servicios de base de datos en la nube:
 
-|     Ambiente     | Propósito                                 | URL Pública Base                                                                                 | Swagger UI Interactivo                                                                                               |
-| :---------------: | :----------------------------------------- | :------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------- |
-|  **🧪 QA**  | Validación y pruebas continuas del equipo | [restaurante-api-qa](https://restaurante-api-qa-fbfmhyg0fufyhhaw.westus3-01.azurewebsites.net)     | [Swagger UI - QA](https://restaurante-api-qa-fbfmhyg0fufyhhaw.westus3-01.azurewebsites.net/swagger-ui/index.html)     |
-| **🚀 PROD** | API de producción para usuarios reales    | [restaurante-api-prod](https://restaurante-api-prod-ccgnexgaf8f5fna8.westus3-01.azurewebsites.net) | [Swagger UI - PROD](https://restaurante-api-prod-ccgnexgaf8f5fna8.westus3-01.azurewebsites.net/swagger-ui/index.html) |
+|     Ambiente     | Propósito                                 | Swagger UI Interactivo                                                                                               | OpenAPI Docs (JSON)                                                                                          |
+| :---------------: | :----------------------------------------- | :------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------- |
+|  **🧪 QA**  | Validación y pruebas continuas del equipo | [Swagger UI - QA](https://restaurante-api-qa-fbfmhyg0fufyhhaw.westus3-01.azurewebsites.net/swagger-ui/index.html)     | [OpenAPI JSON - QA](https://restaurante-api-qa-fbfmhyg0fufyhhaw.westus3-01.azurewebsites.net/v3/api-docs)     |
+| **🚀 PROD** | API de producción para usuarios reales    | [Swagger UI - PROD](https://restaurante-api-prod-ccgnexgaf8f5fna8.westus3-01.azurewebsites.net/swagger-ui/index.html) | [OpenAPI JSON - PROD](https://restaurante-api-prod-ccgnexgaf8f5fna8.westus3-01.azurewebsites.net/v3/api-docs) |
+
+---
+
+### 📊 Rectificación de Pruebas y Calidad Finales
+
+Como parte del aseguramiento de calidad antes de la promoción a producción, se consolidaron las evidencias de pruebas automáticas, análisis estático y cobertura de código.
+
+#### 1. 🧪 Ejecución de Pruebas Automatizadas (`mvn test`)
+
+Ejecución completa de la suite de pruebas unitarias y de integración sobre la lógica del negocio, controladores REST y mecanismos de autenticación.
+
+<p align="center">
+  <img src="docs/images/MVNTestFinal.png" alt="Ejecución de Pruebas Maven Test" width="90%" />
+</p>
+
+<p align="center"><i>Figura: Consola de ejecución exitosa de pruebas automatizadas con Maven (Build Success - 0 failures).</i></p>
+
+---
+
+#### 2. 🛡️ Análisis Estático de Código con SonarQube
+
+Evaluación de calidad de código, deuda técnica, bugs, vulnerabilidades y verificación del Quality Gate en SonarQube.
+
+<p align="center">
+  <img src="docs/images/SonarqubeNew.png" alt="Análisis de Código en SonarQube" width="90%" />
+</p>
+<p align="center">
+  <img src="docs/images/SonarqubeGeneral.png" alt="Análisis de Código en SonarQube" width="90%" />
+</p>
+<p align="center">
+  <img src="docs/images/SonarqubeIssues.png" alt="Análisis de Código en SonarQube" width="90%" />
+</p>
+
+<p align="center"><i>Figura: Panel de control de SonarQube mostrando el estado de calidad del proyecto y Quality Gate superado.</i></p>
+
+---
+
+#### 3. 📈 Cobertura de Código con JaCoCo
+
+Reporte detallado generado por el plugin de JaCoCo tras la ejecución de pruebas, certificando el porcentaje de cobertura de ramas y líneas de código.
+
+<p align="center">
+  <img src="docs/images/JacocoCoverage.png" alt="Reporte de Cobertura JaCoCo" width="90%" />
+</p>
+
+<p align="center"><i>Figura: Reporte analítico de cobertura de código JaCoCo confirmando el cumplimiento del umbral requerido.</i></p>
