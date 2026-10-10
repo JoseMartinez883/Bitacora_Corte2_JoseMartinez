@@ -69,7 +69,7 @@ jobs:
               {"name": "SERVER_PORT", "value": "8080"},
               {"name": "WEBSITES_PORT", "value": "8080"},
               {"name": "DB_HOST", "value": "${{ secrets.DB_HOST_QA }}"},
-              {"name": "DB_NAME", "value": "postgres"},
+              {"name": "DB_NAME", "value": "postgres?sslmode=require"},
               {"name": "DB_USER", "value": "postgres"},
               {"name": "DB_PASSWORD", "value": "${{ secrets.DB_PASSWORD_PROD }}"},
               {"name": "MONGO_URI", "value": "${{ secrets.MONGO_URI_QA }}"},
