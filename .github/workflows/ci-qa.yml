@@ -100,7 +100,8 @@ jobs:
           app-settings-json: |
             [
               {"name": "SPRING_PROFILES_ACTIVE", "value": "docker"},
-              {"name": "SERVER_PORT", "value": "8081"},
+              {"name": "SERVER_PORT", "value": "8080"},
+              {"name": "WEBSITES_PORT", "value": "8080"},
               {"name": "DB_HOST", "value": "${{ secrets.DB_HOST_QA }}"},
               {"name": "DB_NAME", "value": "postgres"},
               {"name": "DB_USER", "value": "postgres"},
