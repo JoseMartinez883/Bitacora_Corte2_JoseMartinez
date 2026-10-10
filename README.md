@@ -589,23 +589,23 @@ El stack está orquestado mediante `docker-compose.yml` utilizando una red bridg
 
 Las siguientes variables son consumidas por el contenedor a través del perfil `application-docker.yml`:
 
-| Variable de Entorno        | Descripción                                              | Valor por Defecto / Ejemplo    | ¿Obligatoria? |
-| -------------------------- | --------------------------------------------------------- | ------------------------------ | :------------: |
-| `SPRING_PROFILES_ACTIVE` | Perfil de configuración de Spring Boot para Docker       | `docker`                     |      Sí      |
-| `SERVER_PORT`            | Puerto HTTP interno en el que escucha la aplicación      | `8080`                       |      Sí      |
-| `DB_HOST`                | Host o nombre de servicio de PostgreSQL en la red Docker  | `postgres`                   |      Sí      |
-| `DB_PORT`                | Puerto interno de PostgreSQL                              | `5432`                       |      Sí      |
-| `DB_NAME`                | Nombre de la base de datos relacional                     | `restaurante`                |      Sí      |
-| `DB_USER`                | Usuario administrador de PostgreSQL                       | `postgres`                   |      Sí      |
-| `DB_PASSWORD`            | Contraseña de acceso a PostgreSQL                        | Definida en`.env`            |      Sí      |
-| `MONGO_HOST`             | Host o nombre de servicio de MongoDB en la red Docker     | `mongo`                      |      Sí      |
-| `MONGO_PORT`             | Puerto interno de MongoDB                                 | `27017`                      |      Sí      |
-| `MONGO_DB`               | Nombre de la base de datos no relacional                  | `restaurante`                |      Sí      |
-| `MONGO_USER`             | Usuario de autenticación en MongoDB                      | `admin`                      |      Sí      |
-| `MONGO_PASSWORD`         | Contraseña de autenticación en MongoDB                  | Definida en`.env`            |      Sí      |
-| `JWT_SECRET`             | Clave secreta para la firma y verificación de tokens JWT | Definida en`.env`            |      Sí      |
-| `GOOGLE_CLIENT_ID`       | Identificador de cliente para inicio de sesión OAuth2    | Opcional / Definido en`.env` |       No       |
-| `GOOGLE_CLIENT_SECRET`   | Clave secreta de cliente para autenticación OAuth2       | Opcional / Definido en`.env` |       No       |
+| Variable de Entorno        | Descripción                                              | Valor por Defecto / Ejemplo | ¿Obligatoria? |
+| -------------------------- | --------------------------------------------------------- | --------------------------- | :------------: |
+| `SPRING_PROFILES_ACTIVE` | Perfil de configuración de Spring Boot para Docker       | `docker`                  |      Sí      |
+| `SERVER_PORT`            | Puerto HTTP interno en el que escucha la aplicación      | `8080`                    |      Sí      |
+| `DB_HOST`                | Host o nombre de servicio de PostgreSQL en la red Docker  | `postgres`                |      Sí      |
+| `DB_PORT`                | Puerto interno de PostgreSQL                              | `5432`                    |      Sí      |
+| `DB_NAME`                | Nombre de la base de datos relacional                     | `restaurante`             |      Sí      |
+| `DB_USER`                | Usuario administrador de PostgreSQL                       | `postgres`                |      Sí      |
+| `DB_PASSWORD`            | Contraseña de acceso a PostgreSQL                        | Definida en`.env`         |      Sí      |
+| `MONGO_HOST`             | Host o nombre de servicio de MongoDB en la red Docker     | `mongo`                   |      Sí      |
+| `MONGO_PORT`             | Puerto interno de MongoDB                                 | `27017`                   |      Sí      |
+| `MONGO_DB`               | Nombre de la base de datos no relacional                  | `restaurante`             |      Sí      |
+| `MONGO_USER`             | Usuario de autenticación en MongoDB                      | `admin`                   |      Sí      |
+| `MONGO_PASSWORD`         | Contraseña de autenticación en MongoDB                  | Definida en`.env`         |      Sí      |
+| `JWT_SECRET`             | Clave secreta para la firma y verificación de tokens JWT | Definida en`.env`         |      Sí      |
+| `GOOGLE_CLIENT_ID`       | Identificador de cliente para inicio de sesión OAuth2    | Definido en`.env`         |      Sí      |
+| `GOOGLE_CLIENT_SECRET`   | Clave secreta de cliente para autenticación OAuth2       | Definido en`.env`         |      Sí      |
 
 ---
 
@@ -877,6 +877,8 @@ Para mantener la seguridad y evitar la exposición de credenciales sensibles en 
 | `DB_PASSWORD_QA`       |    QA    | Contraseña de la base de datos PostgreSQL de QA.                                           |
 | `MONGO_URI_QA`         |    QA    | Cadena de conexión cifrada hacia Azure Cosmos DB for MongoDB (QA).                         |
 | `JWT_SECRET_QA`        |    QA    | Clave criptográfica para la firma y validación de tokens JWT en QA.                       |
+| `GOOGLE_CLIENT_ID`     |  Global  | Identificador de cliente para autenticación OAuth2 con Google.                             |
+| `GOOGLE_CLIENT_SECRET` |  Global  | Clave secreta de cliente para autenticación OAuth2 con Google.                             |
 
 <p align="center">
   <img src="docs/images/GitHubSecrets.png" alt="Secrets configurados en GitHub Actions" width="85%" />
