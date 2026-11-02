@@ -1,10 +1,12 @@
 package com.restaurante.service;
 
 import com.restaurante.exception.CatalogoNotFoundException;
+import com.restaurante.exception.PlatoNotFoundException;
 import com.restaurante.model.dto.request.CatalogoRequestDTO;
 import com.restaurante.model.dto.response.CatalogoResponseDTO;
 import com.restaurante.persistence.document.CatalogoDocument;
 import com.restaurante.repository.CatalogoRepositoryMongo;
+import com.restaurante.repository.PlatoRepositoryJPA;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,6 +24,7 @@ import static org.mockito.Mockito.*;
 class CatalogoServiceImplTest {
 
     @Mock private CatalogoRepositoryMongo catalogoRepository;
+    @Mock private PlatoRepositoryJPA platoRepository;
     @InjectMocks private CatalogoServiceImpl catalogoService;
 
     private CatalogoDocument doc() {
@@ -36,6 +39,7 @@ class CatalogoServiceImplTest {
 
     @Test
     void crearCatalogo_guardaEnMongo() {
+        when(platoRepository.existsById(1L)).thenReturn(true);
         when(catalogoRepository.save(any(CatalogoDocument.class))).thenAnswer(i -> {
             CatalogoDocument d = i.getArgument(0);
             d.setId("c1");
@@ -45,6 +49,14 @@ class CatalogoServiceImplTest {
         assertEquals("c1", res.id());
         assertEquals(1L, res.idPlato());
         assertEquals(1, res.imagenesUrls().size());
+    }
+
+    @Test
+    void crearCatalogo_lanzaExcepcionSiPlatoNoExiste() {
+        when(platoRepository.existsById(99L)).thenReturn(false);
+        CatalogoRequestDTO reqInvalido = new CatalogoRequestDTO(99L, List.of(), List.of());
+        assertThrows(PlatoNotFoundException.class, () -> catalogoService.crearCatalogo(reqInvalido));
+        verify(catalogoRepository, never()).save(any());
     }
 
     @Test
@@ -68,6 +80,7 @@ class CatalogoServiceImplTest {
     @Test
     void actualizar_exitoso() {
         when(catalogoRepository.findById("c1")).thenReturn(Optional.of(doc()));
+        when(platoRepository.existsById(2L)).thenReturn(true);
         when(catalogoRepository.save(any(CatalogoDocument.class))).thenAnswer(i -> i.getArgument(0));
         CatalogoRequestDTO nuevo = new CatalogoRequestDTO(2L, List.of("a.jpg", "b.jpg"), List.of());
         CatalogoResponseDTO res = catalogoService.actualizar("c1", nuevo);
@@ -80,6 +93,14 @@ class CatalogoServiceImplTest {
         when(catalogoRepository.findById("x")).thenReturn(Optional.empty());
         CatalogoRequestDTO r = req();
         assertThrows(CatalogoNotFoundException.class, () -> catalogoService.actualizar("x", r));
+    }
+
+    @Test
+    void actualizar_lanzaExcepcionSiPlatoNoExiste() {
+        when(catalogoRepository.findById("c1")).thenReturn(Optional.of(doc()));
+        when(platoRepository.existsById(99L)).thenReturn(false);
+        CatalogoRequestDTO nuevo = new CatalogoRequestDTO(99L, List.of(), List.of());
+        assertThrows(PlatoNotFoundException.class, () -> catalogoService.actualizar("c1", nuevo));
     }
 
     @Test
