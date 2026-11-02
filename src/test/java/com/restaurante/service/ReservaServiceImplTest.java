@@ -105,12 +105,8 @@ class ReservaServiceImplTest {
     void crearReserva_lanzaExcepcionSiMesaYaEstaReservadaEnHorario() {
         mockSecurityContext();
         LocalDateTime fecha = LocalDateTime.now().plusDays(1).withHour(20).withMinute(0);
-        var existente = new com.restaurante.persistence.entity.ReservaEntity();
-        existente.setId(UUID.randomUUID());
-        existente.setIdMesa(1L);
-        existente.setActiva(true);
-        existente.setFechaHora(fecha);
-        when(reservaRepository.findAll()).thenReturn(List.of(existente));
+        // Simular conflicto de horario detectado por consulta indexada en base de datos
+        when(reservaRepository.existeConflicto(eq(1L), any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(true);
 
         ReservaRequestDTO dto = new ReservaRequestDTO(1L, "Pedro", fecha.plusMinutes(30), 2);
         assertThrows(com.restaurante.exception.MesaYaReservadaException.class, () -> reservaService.crearReserva(dto));
@@ -121,33 +117,16 @@ class ReservaServiceImplTest {
     void crearReserva_coberturaDeFiltros() {
         mockSecurityContext();
         LocalDateTime fecha = LocalDateTime.now().plusDays(1).withHour(20).withMinute(0);
-        
-        var inactiva = new com.restaurante.persistence.entity.ReservaEntity();
-        inactiva.setActiva(false);
-        inactiva.setIdMesa(1L);
-        
-        var mesaNull = new com.restaurante.persistence.entity.ReservaEntity();
-        mesaNull.setActiva(true);
-        mesaNull.setIdMesa(null);
-        
-        var otraMesa = new com.restaurante.persistence.entity.ReservaEntity();
-        otraMesa.setActiva(true);
-        otraMesa.setIdMesa(2L);
-        
-        var sinFecha = new com.restaurante.persistence.entity.ReservaEntity();
-        sinFecha.setActiva(true);
-        sinFecha.setIdMesa(1L);
-        sinFecha.setFechaHora(null);
-        
-        var fueraDeHorario = new com.restaurante.persistence.entity.ReservaEntity();
-        fueraDeHorario.setActiva(true);
-        fueraDeHorario.setIdMesa(1L);
-        fueraDeHorario.setFechaHora(fecha.minusHours(3)); // 180 min diff
+        // Simular que no existe conflicto de horario
+        when(reservaRepository.existeConflicto(eq(1L), any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(false);
 
-        when(reservaRepository.findAll()).thenReturn(List.of(inactiva, mesaNull, otraMesa, sinFecha, fueraDeHorario));
+        var guardada = new com.restaurante.persistence.entity.ReservaEntity();
+        guardada.setId(UUID.randomUUID());
+        guardada.setIdMesa(1L);
+        guardada.setFechaHora(fecha);
 
         ReservaRequestDTO dto = new ReservaRequestDTO(1L, "Pedro", fecha, 2);
-        when(reservaRepository.save(any())).thenReturn(inactiva);
+        when(reservaRepository.save(any())).thenReturn(guardada);
         assertNotNull(reservaService.crearReserva(dto));
     }
 
@@ -161,20 +140,8 @@ class ReservaServiceImplTest {
         when(reservaRepository.findById(testId)).thenReturn(Optional.of(entity));
         
         LocalDateTime fecha = LocalDateTime.now().plusDays(1).withHour(20).withMinute(0);
-        
-        var mismaReserva = new com.restaurante.persistence.entity.ReservaEntity();
-        mismaReserva.setId(testId); // Mismo ID
-        mismaReserva.setActiva(true);
-        mismaReserva.setIdMesa(1L);
-        mismaReserva.setFechaHora(fecha);
-        
-        var conflicto = new com.restaurante.persistence.entity.ReservaEntity();
-        conflicto.setId(UUID.randomUUID());
-        conflicto.setActiva(true);
-        conflicto.setIdMesa(1L);
-        conflicto.setFechaHora(fecha);
-        
-        when(reservaRepository.findAll()).thenReturn(List.of(mismaReserva, conflicto));
+        // Simular conflicto de horario excluyendo la reserva actual (mismo ID)
+        when(reservaRepository.existeConflictoExcluyendo(eq(testId), eq(1L), any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(true);
         
         ReservaRequestDTO dto = new ReservaRequestDTO(1L, "Juan", fecha, 4);
         assertThrows(com.restaurante.exception.MesaYaReservadaException.class, () -> reservaService.actualizar(testId, dto));

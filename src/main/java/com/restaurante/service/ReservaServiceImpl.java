@@ -12,6 +12,7 @@ import com.restaurante.repository.ReservaRepositoryJPA;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.util.List;
@@ -31,10 +32,12 @@ public class ReservaServiceImpl implements ReservaService {
         log.info("Iniciando creación de reserva para mesa ID {} a nombre de '{}' para el horario {}", dto.idMesa(), dto.cliente(), dto.fechaHora());
 
         // Validar conflicto de reserva: una mesa no puede tener dos reservas activas superpuestas (ventana de 2 horas)
-        boolean conflicto = reservaRepository.findAll().stream()
-                .filter(r -> r.isActiva() && r.getIdMesa() != null && r.getIdMesa().equals(dto.idMesa()))
-                .filter(r -> r.getFechaHora() != null && dto.fechaHora() != null)
-                .anyMatch(r -> Math.abs(Duration.between(r.getFechaHora().atZone(ZoneId.systemDefault()), dto.fechaHora().atZone(ZoneId.systemDefault())).toMinutes()) < 120);
+        boolean conflicto = false;
+        if (dto.idMesa() != null && dto.fechaHora() != null) {
+            LocalDateTime inicio = dto.fechaHora().minusHours(2);
+            LocalDateTime fin = dto.fechaHora().plusHours(2);
+            conflicto = reservaRepository.existeConflicto(dto.idMesa(), inicio, fin);
+        }
 
         if (conflicto) {
             log.warn("Conflicto de horario [409]: la mesa {} ya tiene una reserva activa para ese bloque horario", dto.idMesa());
@@ -90,10 +93,12 @@ public class ReservaServiceImpl implements ReservaService {
         validarPropiedadSiEsCliente(reservaAnterior);
 
         // Validar conflicto de horario excluyendo la misma reserva
-        boolean conflicto = reservaRepository.findAll().stream()
-                .filter(r -> r.isActiva() && !r.getId().equals(id) && r.getIdMesa() != null && r.getIdMesa().equals(dto.idMesa()))
-                .filter(r -> r.getFechaHora() != null && dto.fechaHora() != null)
-                .anyMatch(r -> Math.abs(Duration.between(r.getFechaHora().atZone(ZoneId.systemDefault()), dto.fechaHora().atZone(ZoneId.systemDefault())).toMinutes()) < 120);
+        boolean conflicto = false;
+        if (dto.idMesa() != null && dto.fechaHora() != null) {
+            LocalDateTime inicio = dto.fechaHora().minusHours(2);
+            LocalDateTime fin = dto.fechaHora().plusHours(2);
+            conflicto = reservaRepository.existeConflictoExcluyendo(id, dto.idMesa(), inicio, fin);
+        }
 
         if (conflicto) {
             log.warn("Conflicto de horario [409] al actualizar reserva: mesa {} ya tiene reserva activa", dto.idMesa());
