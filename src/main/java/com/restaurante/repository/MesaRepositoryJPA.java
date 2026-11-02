@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MesaRepositoryJPA extends JpaRepository<MesaEntity, Long> {
+    long countByCuentaAbiertaTrue();
 }

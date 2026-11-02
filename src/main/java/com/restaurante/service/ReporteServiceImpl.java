@@ -26,7 +26,7 @@ public class ReporteServiceImpl implements ReporteService {
     public Map<String, Object> obtenerResumenDia() {
         Map<String, Object> r = new HashMap<>();
         r.put("totalPedidos", pedidoRepository.count());
-        r.put("mesasActivas", mesaRepository.findAll().stream().map(mesaEntityMapper::toDomain).filter(Mesa::isCuentaAbierta).count());
+        r.put("mesasActivas", mesaRepository.countByCuentaAbiertaTrue());
         return r;
     }
     @Override

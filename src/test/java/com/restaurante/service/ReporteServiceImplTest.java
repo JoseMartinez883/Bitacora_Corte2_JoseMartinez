@@ -29,10 +29,10 @@ class ReporteServiceImplTest {
     @Test
     void obtenerResumenDia() {
         when(pedidoRepository.count()).thenReturn(10L);
-        when(mesaRepository.findAll()).thenReturn(List.of(new com.restaurante.persistence.entity.MesaEntity()));
+        when(mesaRepository.countByCuentaAbiertaTrue()).thenReturn(3L);
         var r = reporteService.obtenerResumenDia();
         assertEquals(10L, r.get("totalPedidos"));
-        assertEquals(0L, r.get("mesasActivas"));
+        assertEquals(3L, r.get("mesasActivas"));
     }
 
     @Test
