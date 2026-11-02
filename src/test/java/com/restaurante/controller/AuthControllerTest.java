@@ -2,7 +2,9 @@ package com.restaurante.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restaurante.model.dto.LoginRequestDTO;
+import com.restaurante.model.dto.RegisterRequestDTO;
 import com.restaurante.security.JwtUtil;
+import com.restaurante.service.UsuarioService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -20,6 +22,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -40,10 +43,7 @@ class AuthControllerTest {
     private com.restaurante.service.UsuarioDetailsService usuarioDetailsService;
 
     @MockitoBean
-    private com.restaurante.repository.UsuarioRepositoryJPA usuarioRepository;
-
-    @MockitoBean
-    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    private UsuarioService usuarioService;
 
     @MockitoBean
     private com.restaurante.security.CustomOAuth2SuccessHandler oAuth2SuccessHandler;
@@ -144,13 +144,12 @@ class AuthControllerTest {
 
     @Test
     void testRegister_Success() throws Exception {
-        com.restaurante.model.dto.RegisterRequestDTO req = new com.restaurante.model.dto.RegisterRequestDTO();
+        RegisterRequestDTO req = new RegisterRequestDTO();
         req.setEmail("new@test.com");
         req.setPassword("password123");
         req.setRol("ROLE_CLIENTE");
 
-        when(usuarioRepository.findByEmail("new@test.com")).thenReturn(java.util.Optional.empty());
-        when(passwordEncoder.encode("password123")).thenReturn("encoded");
+        doNothing().when(usuarioService).registrarCliente(any());
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -161,17 +160,48 @@ class AuthControllerTest {
 
     @Test
     void testRegister_FallaEmailDuplicado() throws Exception {
-        com.restaurante.model.dto.RegisterRequestDTO req = new com.restaurante.model.dto.RegisterRequestDTO();
+        RegisterRequestDTO req = new RegisterRequestDTO();
         req.setEmail("exist@test.com");
         req.setPassword("password123");
         req.setRol("ROLE_CLIENTE");
 
-        when(usuarioRepository.findByEmail("exist@test.com")).thenReturn(java.util.Optional.of(new com.restaurante.persistence.entity.UsuarioEntity()));
+        doThrow(new IllegalArgumentException("El email ya está registrado")).when(usuarioService).registrarCliente(any());
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("El email ya está registrado"));
+    }
+
+    @Test
+    void testRegisterEmpleado_Success() throws Exception {
+        RegisterRequestDTO req = new RegisterRequestDTO();
+        req.setEmail("chef@test.com");
+        req.setPassword("password123");
+        req.setRol("CHEF");
+
+        doNothing().when(usuarioService).registrarEmpleado(any());
+
+        mockMvc.perform(post("/api/v1/auth/empleados")
+                .with(user("admin").roles("ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Empleado con rol CHEF registrado exitosamente"));
+    }
+
+    @Test
+    void testRegisterEmpleado_ForbiddenParaCliente() throws Exception {
+        RegisterRequestDTO req = new RegisterRequestDTO();
+        req.setEmail("chef@test.com");
+        req.setPassword("password123");
+        req.setRol("CHEF");
+
+        mockMvc.perform(post("/api/v1/auth/empleados")
+                .with(user("cliente").roles("CLIENTE"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isForbidden());
     }
 }
