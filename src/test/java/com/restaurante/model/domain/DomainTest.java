@@ -206,6 +206,7 @@ class DomainTest {
         c.cerrarCuenta("TARJETA");
         assertEquals(EstadoCuenta.CERRADA, c.getEstado());
         assertEquals("TARJETA", c.getMetodoPago());
+        assertEquals(119.0, c.getTotal());
         
         ItemPedido item = new ItemPedido();
         item.setCantidad(2);

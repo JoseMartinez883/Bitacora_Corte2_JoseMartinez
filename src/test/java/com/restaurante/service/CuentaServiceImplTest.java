@@ -48,6 +48,7 @@ class CuentaServiceImplTest {
         CuentaEntity cuentaEntity = new CuentaEntity();
         cuentaEntity.setIdMesa(1L);
         cuentaEntity.setEstado(EstadoCuenta.ABIERTA);
+        cuentaEntity.setTotal(50000.0);
         cuentaEntity.setItems(List.of());
         
         com.restaurante.persistence.entity.MesaEntity mesaEntity = new com.restaurante.persistence.entity.MesaEntity();
@@ -57,9 +58,13 @@ class CuentaServiceImplTest {
         when(cuentaRepository.findByIdMesaAndEstado(1L, EstadoCuenta.ABIERTA)).thenReturn(Optional.of(cuentaEntity));
         when(pedidoRepository.existsByIdMesaAndEstadoNot(1L, com.restaurante.model.domain.EstadoPedido.ENTREGADO)).thenReturn(false);
         when(mesaRepository.findById(1L)).thenReturn(Optional.of(mesaEntity));
-        when(cuentaRepository.save(any())).thenReturn(cuentaEntity);
+        when(cuentaRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
         
-        assertNotNull(cuentaService.registrarPago(1L, new PagoCuentaRequestDTO("EFECTIVO", 50000.0)));
+        CuentaResponseDTO res = cuentaService.registrarPago(1L, new PagoCuentaRequestDTO("EFECTIVO", 50000.0));
+        assertNotNull(res);
+        assertEquals(EstadoCuenta.CERRADA, res.estado());
+        assertEquals("EFECTIVO", res.metodoPago());
+        assertEquals(50000.0, res.total());
     }
 
     @Test

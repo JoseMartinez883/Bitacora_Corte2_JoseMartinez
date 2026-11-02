@@ -18,9 +18,12 @@ public class Cuenta {
     private String metodoPago;
 
     public Double calcularTotal() {
-        this.total = items.stream()
+        if (this.total != null && this.total > 0 && (items == null || items.isEmpty())) {
+            return this.total;
+        }
+        this.total = items != null ? items.stream()
                 .mapToDouble(ItemPedido::calcularSubtotal)
-                .sum();
+                .sum() : 0.0;
         return this.total;
     }
 
@@ -32,6 +35,8 @@ public class Cuenta {
         this.metodoPago = metodoPago;
         this.estado = EstadoCuenta.CERRADA;
         this.fechaCierre = LocalDateTime.now(java.time.ZoneId.systemDefault());
-        calcularTotal();
+        if (this.total == null || this.total == 0.0) {
+            calcularTotal();
+        }
     }
 }
