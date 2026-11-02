@@ -75,10 +75,36 @@ public class AuthController {
         com.restaurante.persistence.entity.UsuarioEntity newUser = com.restaurante.persistence.entity.UsuarioEntity.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .rol(request.getRol())
+                .rol("CLIENTE") // Forzado a CLIENTE para evitar escalamiento
                 .build();
 
         usuarioRepository.save(newUser);
         return ResponseEntity.ok("Usuario registrado exitosamente");
+    }
+
+    @PostMapping("/empleados")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Registrar empleado", description = "Exclusivo para administradores. Permite registrar personal con rol ADMIN, CHEF o MESERO.")
+    @ApiResponse(responseCode = "200", description = "Empleado registrado exitosamente")
+    @ApiResponse(responseCode = "400", description = "El correo ya está registrado o datos inválidos")
+    @ApiResponse(responseCode = "403", description = "Acceso denegado: requiere rol ADMIN")
+    public ResponseEntity<String> registerEmpleado(@Valid @RequestBody com.restaurante.model.dto.RegisterRequestDTO request) {
+        if (usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
+            return ResponseEntity.badRequest().body("El email ya está registrado");
+        }
+
+        String rol = (request.getRol() != null && !request.getRol().isBlank()) ? request.getRol().toUpperCase() : "MESERO";
+        if (rol.startsWith("ROLE_")) {
+            rol = rol.substring(5);
+        }
+
+        com.restaurante.persistence.entity.UsuarioEntity newUser = com.restaurante.persistence.entity.UsuarioEntity.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .rol(rol)
+                .build();
+
+        usuarioRepository.save(newUser);
+        return ResponseEntity.ok("Empleado con rol " + rol + " registrado exitosamente");
     }
 }
