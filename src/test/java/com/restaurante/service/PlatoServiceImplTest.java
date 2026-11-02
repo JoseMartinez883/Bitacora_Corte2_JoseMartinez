@@ -45,7 +45,7 @@ class PlatoServiceImplTest {
 
     @Test
     void crearPlato_exitoso() {
-        when(platoRepository.findAll()).thenReturn(List.of());
+        when(platoRepository.existsByNombreIgnoreCase("Pizza")).thenReturn(false);
         when(platoRepository.save(any())).thenReturn(platoEntity);
         assertNotNull(platoService.crearPlato(new PlatoRequestDTO("Pizza", 1.0, "", "", "", List.of(), List.of(), List.of(), "")));
     }
@@ -93,7 +93,7 @@ class PlatoServiceImplTest {
 
     @Test
     void crearPlato_lanzaExcepcionSiYaExiste() {
-        when(platoRepository.findAll()).thenReturn(List.of(platoEntity));
+        when(platoRepository.existsByNombreIgnoreCase("Pizza")).thenReturn(true);
         PlatoRequestDTO dto = new PlatoRequestDTO("Pizza", 1.0, "", "", "", List.of(), List.of(), List.of(), "");
         assertThrows(PlatoAlreadyExistException.class, () -> platoService.crearPlato(dto));
         verify(platoRepository, never()).save(any());

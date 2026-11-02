@@ -31,7 +31,7 @@ public class PlatoServiceImpl implements PlatoService {
         log.info("Iniciando creación de plato con nombre '{}', categoría '{}'", dto.nombre(), dto.categoria());
         platoValidator.validarMasaYSalsa(dto.masa(), dto.salsa());
         platoValidator.validarLimitesPorCategoria(dto.categoria(), dto.toppings(), dto.proteinas(), dto.salsasExtras());
-        boolean existe = platoRepository.findAll().stream().anyMatch(p -> p.getNombre().equalsIgnoreCase(dto.nombre()));
+        boolean existe = platoRepository.existsByNombreIgnoreCase(dto.nombre());
         if (existe) {
             log.warn("Fallo al crear plato: ya existe un plato con el nombre '{}'", dto.nombre());
             throw new PlatoAlreadyExistException(dto.nombre());
