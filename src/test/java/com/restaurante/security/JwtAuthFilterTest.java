@@ -1,6 +1,5 @@
 package com.restaurante.security;
 
-import com.restaurante.service.UsuarioDetailsService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,13 +12,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.IOException;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,9 +24,6 @@ class JwtAuthFilterTest {
 
     @Mock
     private JwtUtil jwtUtil;
-
-    @Mock
-    private UsuarioDetailsService usuarioDetailsService;
 
     @Mock
     private FilterChain filterChain;
@@ -64,13 +56,11 @@ class JwtAuthFilterTest {
         request.addHeader("Authorization", "Bearer " + token);
 
         when(jwtUtil.isValid(token)).thenReturn(true);
-        
+
         Claims mockClaims = mock(Claims.class);
         when(mockClaims.getSubject()).thenReturn(email);
+        when(mockClaims.get("rol", String.class)).thenReturn("ADMIN");
         when(jwtUtil.extractClaims(token)).thenReturn(mockClaims);
-
-        UserDetails userDetails = new User(email, "password", List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
-        when(usuarioDetailsService.loadUserByUsername(email)).thenReturn(userDetails);
 
         // Act
         jwtAuthFilter.doFilterInternal(request, response, filterChain);
@@ -79,6 +69,58 @@ class JwtAuthFilterTest {
         // Comprobamos que el filtro haya inyectado exitosamente el usuario en el contexto de Spring Security
         assertNotNull(SecurityContextHolder.getContext().getAuthentication());
         assertEquals(email, SecurityContextHolder.getContext().getAuthentication().getName());
+        assertTrue(SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")));
+        verify(filterChain).doFilter(request, response);
+    }
+
+    @Test
+    void doFilterInternal_WithValidJwtAndPrefixedRole_ShouldSetAuthentication() throws ServletException, IOException {
+        // Arrange
+        String token = "valid.jwt.token";
+        String email = "admin@bellaciao.com";
+        request.addHeader("Authorization", "Bearer " + token);
+
+        when(jwtUtil.isValid(token)).thenReturn(true);
+
+        Claims mockClaims = mock(Claims.class);
+        when(mockClaims.getSubject()).thenReturn(email);
+        when(mockClaims.get("rol", String.class)).thenReturn("ROLE_ADMIN");
+        when(jwtUtil.extractClaims(token)).thenReturn(mockClaims);
+
+        // Act
+        jwtAuthFilter.doFilterInternal(request, response, filterChain);
+
+        // Assert
+        assertNotNull(SecurityContextHolder.getContext().getAuthentication());
+        assertEquals(email, SecurityContextHolder.getContext().getAuthentication().getName());
+        assertTrue(SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")));
+        verify(filterChain).doFilter(request, response);
+    }
+
+    @Test
+    void doFilterInternal_WithNullRole_ShouldDefaultToCliente() throws ServletException, IOException {
+        // Arrange
+        String token = "valid.jwt.token";
+        String email = "user@bellaciao.com";
+        request.addHeader("Authorization", "Bearer " + token);
+
+        when(jwtUtil.isValid(token)).thenReturn(true);
+
+        Claims mockClaims = mock(Claims.class);
+        when(mockClaims.getSubject()).thenReturn(email);
+        when(mockClaims.get("rol", String.class)).thenReturn(null);
+        when(jwtUtil.extractClaims(token)).thenReturn(mockClaims);
+
+        // Act
+        jwtAuthFilter.doFilterInternal(request, response, filterChain);
+
+        // Assert
+        assertNotNull(SecurityContextHolder.getContext().getAuthentication());
+        assertEquals(email, SecurityContextHolder.getContext().getAuthentication().getName());
+        assertTrue(SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_CLIENTE")));
         verify(filterChain).doFilter(request, response);
     }
 
@@ -86,7 +128,7 @@ class JwtAuthFilterTest {
     void doFilterInternal_WithoutAuthorizationHeader_ShouldContinueChainWithoutAuth() throws ServletException, IOException {
         // Arrange
         // No añadimos el header Authorization a la petición
-        
+
         // Act
         jwtAuthFilter.doFilterInternal(request, response, filterChain);
 
@@ -94,7 +136,6 @@ class JwtAuthFilterTest {
         assertNull(SecurityContextHolder.getContext().getAuthentication());
         verify(filterChain).doFilter(request, response);
         verifyNoInteractions(jwtUtil);
-        verifyNoInteractions(usuarioDetailsService);
     }
 
     @Test
@@ -112,6 +153,5 @@ class JwtAuthFilterTest {
         assertNull(SecurityContextHolder.getContext().getAuthentication());
         verify(filterChain).doFilter(request, response);
         verify(jwtUtil, never()).extractClaims(anyString());
-        verifyNoInteractions(usuarioDetailsService);
     }
 }
