@@ -40,7 +40,10 @@ class CuentaServiceImplTest {
         cuentaEntity.setItems(List.of());
         when(cuentaRepository.findByIdMesaAndEstado(1L, EstadoCuenta.ABIERTA)).thenReturn(Optional.of(cuentaEntity));
         
-        assertNotNull(cuentaService.obtenerCuentaActivaPorMesa(1L));
+        CuentaResponseDTO res = cuentaService.obtenerCuentaActivaPorMesa(1L);
+        assertNotNull(res);
+        assertEquals(1L, res.idMesa());
+        assertEquals(EstadoCuenta.ABIERTA, res.estado());
     }
 
     @Test
@@ -144,10 +147,13 @@ class CuentaServiceImplTest {
         mesaEntity.setId(1L);
         mesaEntity.setEstado(com.restaurante.model.domain.EstadoMesa.OCUPADA);
         when(mesaRepository.findById(1L)).thenReturn(Optional.of(mesaEntity));
-        when(cuentaRepository.save(any())).thenReturn(cuentaEntity);
+        when(cuentaRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         CuentaResponseDTO res = cuentaService.registrarPago(1L, new PagoCuentaRequestDTO("EFECTIVO", 500.0));
         assertNotNull(res);
+        assertEquals(EstadoCuenta.CERRADA, res.estado());
+        assertEquals("EFECTIVO", res.metodoPago());
+        assertEquals(400.0, res.total());
     }
     
     @Test
@@ -164,9 +170,12 @@ class CuentaServiceImplTest {
         mesaEntity.setId(1L);
         mesaEntity.setEstado(com.restaurante.model.domain.EstadoMesa.OCUPADA);
         when(mesaRepository.findById(1L)).thenReturn(Optional.of(mesaEntity));
-        when(cuentaRepository.save(any())).thenReturn(cuentaEntity);
+        when(cuentaRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         CuentaResponseDTO res = cuentaService.registrarPago(1L, new PagoCuentaRequestDTO("EFECTIVO", 0.0));
         assertNotNull(res);
+        assertEquals(EstadoCuenta.CERRADA, res.estado());
+        assertEquals("EFECTIVO", res.metodoPago());
+        assertEquals(0.0, res.total());
     }
 }

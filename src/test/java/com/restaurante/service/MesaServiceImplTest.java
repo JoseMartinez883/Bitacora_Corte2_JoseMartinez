@@ -49,7 +49,7 @@ class MesaServiceImplTest {
         var response = mesaService.abrirCuenta(1L);
         assertEquals(EstadoMesa.OCUPADA, response.estado());
         verify(mesaRepository).save(any());
-        verify(cuentaRepository).save(any());
+        verify(cuentaRepository).save(argThat(c -> Long.valueOf(1L).equals(c.getIdMesa()) && com.restaurante.model.domain.EstadoCuenta.ABIERTA.equals(c.getEstado())));
     }
 
     @Test
