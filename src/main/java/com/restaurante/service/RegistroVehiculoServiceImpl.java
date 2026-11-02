@@ -33,18 +33,14 @@ public class RegistroVehiculoServiceImpl implements RegistroVehiculoService {
         log.info("Iniciando registro de entrada para vehículo con placa: '{}'", dto.placa());
 
         // 1. Validar límite de cupos del parqueadero (ej. 20 cupos)
-        long activos = registroRepository.findAll().stream()
-                .filter(v -> v.getSalida() == null && ESTADO_ACTIVO.equalsIgnoreCase(v.getEstado()))
-                .count();
+        long activos = registroRepository.countBySalidaIsNullAndEstadoIgnoreCase(ESTADO_ACTIVO);
         if (activos >= CAPACIDAD_MAXIMA_PARQUEADERO) {
             log.warn("Ingreso denegado: parqueadero lleno con {} cupos ocupados", CAPACIDAD_MAXIMA_PARQUEADERO);
             throw new ParqueaderoLlenoException(CAPACIDAD_MAXIMA_PARQUEADERO);
         }
 
         // 2. Validar que la placa no se encuentre ya activa dentro del parqueadero (Conflicto 409)
-        boolean yaEstacionado = registroRepository.findAll().stream()
-                .anyMatch(v -> v.getPlaca() != null && v.getPlaca().equalsIgnoreCase(dto.placa())
-                        && v.getSalida() == null && ESTADO_ACTIVO.equalsIgnoreCase(v.getEstado()));
+        boolean yaEstacionado = registroRepository.existsByPlacaIgnoreCaseAndSalidaIsNullAndEstadoIgnoreCase(dto.placa(), ESTADO_ACTIVO);
         if (yaEstacionado) {
             log.warn("Ingreso denegado: la placa '{}' ya tiene una estancia activa en el parqueadero", dto.placa());
             throw new VehiculoYaEstacionadoException(dto.placa());
@@ -73,10 +69,7 @@ public class RegistroVehiculoServiceImpl implements RegistroVehiculoService {
     @Override
     public RegistroVehiculoResponseDTO registrarSalidaPorPlaca(String placa) {
         log.info("Registrando salida de vehículo con placa: '{}'", placa);
-        RegistroVehiculo registro = registroRepository.findAll().stream()
-                .filter(v -> v.getPlaca() != null && v.getPlaca().equalsIgnoreCase(placa)
-                        && v.getSalida() == null && ESTADO_ACTIVO.equalsIgnoreCase(v.getEstado()))
-                .findFirst()
+        RegistroVehiculo registro = registroRepository.findByPlacaIgnoreCaseAndSalidaIsNullAndEstadoIgnoreCase(placa, ESTADO_ACTIVO)
                 .map(entityMapper::toDomain)
                 .orElseThrow(() -> {
                     log.warn("No se encontró vehículo activo con placa: '{}'", placa);
@@ -91,8 +84,7 @@ public class RegistroVehiculoServiceImpl implements RegistroVehiculoService {
     @Override
     public List<RegistroVehiculoResponseDTO> listarActivos() {
         log.info("Consultando vehículos actualmente activos en el parqueadero");
-        return registroRepository.findAll().stream()
-                .filter(v -> v.getSalida() == null && ESTADO_ACTIVO.equalsIgnoreCase(v.getEstado()))
+        return registroRepository.findBySalidaIsNullAndEstadoIgnoreCase(ESTADO_ACTIVO).stream()
                 .map(entityMapper::toDomain)
                 .map(mapperOut::toResponse)
                 .toList();

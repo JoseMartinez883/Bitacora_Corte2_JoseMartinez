@@ -54,7 +54,7 @@ class RegistroVehiculoServiceImplTest {
     void listarActivos_exitoso() {
         var entity = new com.restaurante.persistence.entity.RegistroVehiculoEntity();
         entity.setEstado("ACTIVO");
-        when(registroRepository.findAll()).thenReturn(List.of(entity));
+        when(registroRepository.findBySalidaIsNullAndEstadoIgnoreCase("ACTIVO")).thenReturn(List.of(entity));
         assertFalse(vehiculoService.listarActivos().isEmpty());
     }
 
@@ -66,14 +66,7 @@ class RegistroVehiculoServiceImplTest {
 
     @Test
     void registrarEntrada_lanzaExcepcionSiParqueaderoLleno() {
-        java.util.List<com.restaurante.persistence.entity.RegistroVehiculoEntity> ocupados = new java.util.ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            var v = new com.restaurante.persistence.entity.RegistroVehiculoEntity();
-            v.setEstado("ACTIVO");
-            v.setSalida(null);
-            ocupados.add(v);
-        }
-        when(registroRepository.findAll()).thenReturn(ocupados);
+        when(registroRepository.countBySalidaIsNullAndEstadoIgnoreCase("ACTIVO")).thenReturn(20L);
 
         var dto = new com.restaurante.model.dto.request.RegistroVehiculoRequestDTO("NEW-999");
         assertThrows(com.restaurante.exception.ParqueaderoLlenoException.class, () -> vehiculoService.registrarEntrada(dto));
@@ -81,11 +74,8 @@ class RegistroVehiculoServiceImplTest {
 
     @Test
     void registrarEntrada_lanzaExcepcionSiPlacaYaEstacionada() {
-        var activo = new com.restaurante.persistence.entity.RegistroVehiculoEntity();
-        activo.setPlaca("DUP-123");
-        activo.setEstado("ACTIVO");
-        activo.setSalida(null);
-        when(registroRepository.findAll()).thenReturn(List.of(activo));
+        when(registroRepository.countBySalidaIsNullAndEstadoIgnoreCase("ACTIVO")).thenReturn(5L);
+        when(registroRepository.existsByPlacaIgnoreCaseAndSalidaIsNullAndEstadoIgnoreCase("DUP-123", "ACTIVO")).thenReturn(true);
 
         var dto = new com.restaurante.model.dto.request.RegistroVehiculoRequestDTO("DUP-123");
         assertThrows(com.restaurante.exception.VehiculoYaEstacionadoException.class, () -> vehiculoService.registrarEntrada(dto));
@@ -98,7 +88,7 @@ class RegistroVehiculoServiceImplTest {
         entity.setPlaca("OUT-456");
         entity.setEstado("ACTIVO");
         entity.setEntrada(java.time.LocalDateTime.now().minusHours(1));
-        when(registroRepository.findAll()).thenReturn(List.of(entity));
+        when(registroRepository.findByPlacaIgnoreCaseAndSalidaIsNullAndEstadoIgnoreCase("OUT-456", "ACTIVO")).thenReturn(java.util.Optional.of(entity));
         when(registroRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
         var response = vehiculoService.registrarSalidaPorPlaca("OUT-456");
