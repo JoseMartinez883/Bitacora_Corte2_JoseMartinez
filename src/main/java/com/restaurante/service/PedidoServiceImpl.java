@@ -106,6 +106,7 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
+    @Transactional
     public void eliminar(UUID id) {
         log.info("Iniciando eliminación/cancelación de pedido con ID: {}", id);
         var entity = pedidoRepository.findById(id).orElseThrow(() -> {

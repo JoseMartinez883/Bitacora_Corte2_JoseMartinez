@@ -12,6 +12,7 @@ import com.restaurante.repository.ReservaRepositoryJPA;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.Duration;
 import java.time.ZoneId;
@@ -28,6 +29,7 @@ public class ReservaServiceImpl implements ReservaService {
     private final ReservaMapperOut reservaMapperOut;
 
     @Override
+    @Transactional
     public ReservaResponseDTO crearReserva(ReservaRequestDTO dto) {
         log.info("Iniciando creación de reserva para mesa ID {} a nombre de '{}' para el horario {}", dto.idMesa(), dto.cliente(), dto.fechaHora());
 
@@ -69,6 +71,7 @@ public class ReservaServiceImpl implements ReservaService {
     }
 
     @Override
+    @Transactional
     public ReservaResponseDTO cancelarReserva(UUID id) {
         log.info("Iniciando cancelación de reserva con ID: {}", id);
         Reserva reserva = reservaRepository.findById(id).map(entityMapper::toDomain).orElseThrow(() -> {
@@ -83,6 +86,7 @@ public class ReservaServiceImpl implements ReservaService {
     }
 
     @Override
+    @Transactional
     public ReservaResponseDTO actualizar(UUID id, ReservaRequestDTO dto) {
         log.info("Iniciando actualización de reserva con ID: {}", id);
         if (!reservaRepository.existsById(id)) {

@@ -13,6 +13,7 @@ import com.restaurante.repository.RegistroVehiculoRepositoryJPA;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Slf4j
@@ -29,6 +30,7 @@ public class RegistroVehiculoServiceImpl implements RegistroVehiculoService {
     private final RegistroVehiculoMapperOut mapperOut;
 
     @Override
+    @Transactional
     public RegistroVehiculoResponseDTO registrarEntrada(RegistroVehiculoRequestDTO dto) {
         log.info("Iniciando registro de entrada para vehículo con placa: '{}'", dto.placa());
 
@@ -53,6 +55,7 @@ public class RegistroVehiculoServiceImpl implements RegistroVehiculoService {
     }
 
     @Override
+    @Transactional
     public RegistroVehiculoResponseDTO registrarSalida(Long id) {
         log.info("Registrando salida de vehículo con ID: {}", id);
         RegistroVehiculo registro = registroRepository.findById(id).map(entityMapper::toDomain)
@@ -67,6 +70,7 @@ public class RegistroVehiculoServiceImpl implements RegistroVehiculoService {
     }
 
     @Override
+    @Transactional
     public RegistroVehiculoResponseDTO registrarSalidaPorPlaca(String placa) {
         log.info("Registrando salida de vehículo con placa: '{}'", placa);
         RegistroVehiculo registro = registroRepository.findByPlacaIgnoreCaseAndSalidaIsNullAndEstadoIgnoreCase(placa, ESTADO_ACTIVO)
