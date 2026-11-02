@@ -2,13 +2,13 @@ package com.restaurante.config;
 
 import com.restaurante.persistence.entity.UsuarioEntity;
 import com.restaurante.repository.UsuarioRepositoryJPA;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.List;
-
+@Slf4j
 @Configuration
 public class DataInitializer {
 
@@ -19,25 +19,21 @@ public class DataInitializer {
             seedUser(usuarioRepository, passwordEncoder, "chef@restaurante.com", "chef123", "CHEF");
             seedUser(usuarioRepository, passwordEncoder, "mesero@restaurante.com", "mesero123", "MESERO");
             seedUser(usuarioRepository, passwordEncoder, "cliente@restaurante.com", "cliente123", "CLIENTE");
-            System.out.println("Base de datos sincronizada con usuarios por defecto.");
+            log.info("Base de datos sincronizada con usuarios por defecto.");
         };
     }
 
     private void seedUser(UsuarioRepositoryJPA repository, PasswordEncoder encoder, String email, String password, String role) {
-        repository.findByEmail(email).ifPresentOrElse(
-                user -> {
-                    user.setPassword(encoder.encode(password));
-                    user.setRol(role);
-                    repository.save(user);
-                },
-                () -> {
-                    UsuarioEntity newUser = UsuarioEntity.builder()
-                            .email(email)
-                            .password(encoder.encode(password))
-                            .rol(role)
-                            .build();
-                    repository.save(newUser);
-                }
-        );
+        if (repository.findByEmail(email).isEmpty()) {
+            UsuarioEntity newUser = UsuarioEntity.builder()
+                    .email(email)
+                    .password(encoder.encode(password))
+                    .rol(role)
+                    .build();
+            repository.save(newUser);
+            log.info("Usuario por defecto creado exitosamente: {} ({})", email, role);
+        } else {
+            log.debug("Usuario {} ya existe en la base de datos, omitiendo seed.", email);
+        }
     }
 }
