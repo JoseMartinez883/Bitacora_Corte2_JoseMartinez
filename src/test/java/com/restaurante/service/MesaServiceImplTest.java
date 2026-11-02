@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class MesaServiceImplTest {
     @Mock private MesaRepositoryJPA mesaRepository;
+    @Mock private CuentaRepositoryJPA cuentaRepository;
     @Spy private MesaEntityMapper mesaEntityMapper = new MesaEntityMapperImpl();
     @Spy private MesaMapperOut mesaMapperOut = new MesaMapperOutImpl();
     @InjectMocks private MesaServiceImpl mesaService;
@@ -48,6 +49,7 @@ class MesaServiceImplTest {
         var response = mesaService.abrirCuenta(1L);
         assertEquals(EstadoMesa.OCUPADA, response.estado());
         verify(mesaRepository).save(any());
+        verify(cuentaRepository).save(any());
     }
 
     @Test
